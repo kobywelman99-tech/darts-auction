@@ -1,0 +1,6 @@
+pandas>=2.0
+pyarrow>=14.0
+numpy>=1.24
+
+# Phase 5 front end
+streamlit>=1.30

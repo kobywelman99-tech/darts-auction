@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+.env
+.ipynb_checkpoints/
+
+# Raw nflverse cache is re-downloadable; keep it out of version control
+data/raw/*.parquet
