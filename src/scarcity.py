@@ -57,7 +57,7 @@ def replacement_level(df: pd.DataFrame, seasons: list[int],
         for yr in seasons:
             pool = (df[(df.season == yr) & (df.position == pos) &
                        (df.games >= min_games)]
-                    .nlargest(rank + 5, "fantasy_points")["ppg"].values)
+                    .nlargest(rank + 5, "ppg")["ppg"].values)
             if len(pool) >= rank:
                 vals.append(pool[rank - 1])
         out[pos] = float(np.mean(vals)) if vals else np.nan
