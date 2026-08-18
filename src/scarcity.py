@@ -49,7 +49,7 @@ def replacement_ranks(include_bench: bool = False) -> dict[str, int]:
 
 
 def replacement_level(df: pd.DataFrame, seasons: list[int],
-                      ranks: dict[str, int], min_games: int = 6) -> pd.Series:
+                      ranks: dict[str, int], min_games: int = 10) -> pd.Series:
     """Average PPG at the replacement rank, across several seasons."""
     out = {}
     for pos, rank in ranks.items():
