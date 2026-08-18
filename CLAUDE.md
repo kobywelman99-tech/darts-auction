@@ -41,7 +41,7 @@ Fantasy production = **opportunity × efficiency**, and the two come from differ
 - **Efficiency** (yards per target, YPC, catch rate) is player-owned and reasonably stable year over year. Historical data estimates it well.
 - **Opportunity** (targets, carries, snap share, red zone touches) is team-owned and resets each offseason. Historical data knows nothing about it — it requires current depth chart and coaching information.
 
-Keep these layers separate in code. When a projection looks wrong, we need to know which layer caused it.
+Keep these layers separate in code. When a projection calls wrong, we need to know which layer caused it.
 
 **Touchdown rate is the noisiest input in fantasy football** and the main cause of false breakouts. `pts_from_td` is isolated in the dataset specifically so it can be regressed toward positional mean.
 
@@ -81,6 +81,44 @@ Key finding already: QB replacement level is 12.2 ppg in this league vs 16.1 ppg
 
 nflverse GitHub releases. Weekly stats use the `stats_player` release (`stats_player_week_{season}.parquet`), which covers 2018–2025 with a consistent 150-column schema. The older `player_stats` release has a different naming convention and does not include 2025 — don't use it.
 
+## Phase 3 — opportunity layer (in progress)
+
+The opportunity layer is a **hand-maintained CSV**, not code: `data/opportunity/{pos}_2026.csv`.
+Depth charts change daily until kickoff; a CSV can be edited in seconds, code cannot.
+
+```bash
+python src/opportunity.py --skeleton RB   # generate starter file (won't overwrite)
+python src/opportunity.py --audit RB      # what still needs filling
+```
+
+Assign a `role_tier` from current news and the numeric shares fill in from defaults.
+Override any numeric column directly when you know better than the default.
+
+**2026 context that makes this phase unusually important:** 10 teams changed head coaches
+and 21 of 32 hired a new offensive coordinator. Play-callers decide who gets screens,
+checkdowns and goal-line work, so 2025 usage is a weaker prior than in a normal year.
+
+**Known roster moves already seeded (as of 2026-08-18):** Kenneth Walker to KC,
+Rico Dowdle to PIT, Rachaad White to WAS, Etienne gone from JAX, Dowdle gone from CAR.
+Team columns in the skeleton are 2025 teams and must be verified individually.
+
+**`job_security` is not a tiebreaker, it's a risk discount.** A 50%-chance-of-a-big-role
+player is worth less than a certain-smaller-role player with identical expected touches,
+because an auction bust costs the roster spot as well as the money.
+
+### Phase 3 caveats
+- Rookies have no history, so they are absent from generated skeletons and must be added by hand.
+- Backtest MAE (2.22 ppg) is measured on players who qualified in BOTH seasons. Players who
+  lost their job entirely are excluded, so the real error is worse than measured and the
+  age curve should carry a bust-risk flag, not just a point estimate.
+
+## Phase 4.5 — market prices (added to roadmap)
+
+Model value alone cannot drive bidding. The edge is the GAP between projected value and
+market price. Pull Yahoo average auction values for this league format and compute
+value-minus-price per player. A $40 player bought at $38 earns nothing; a $22 player
+bought at $9 wins the draft.
+
 ### Phase 3 RB status (updated 2026-08-18)
 50 of 163 RB rows filled — covers every back with realistic auction value.
 The remaining ~113 are deep bench/practice-squad names that will go for $1 or undrafted.
@@ -95,3 +133,29 @@ The remaining ~113 are deep bench/practice-squad names that will go for $1 or un
 - Pacheco is now a Gibbs handcuff in Detroit, not a starter.
 
 These are the volatile rows. Re-check in the final week before the draft.
+
+### Phase 3 WR/TE status (2026-08-18)
+TE: 24/127 filled. WR: 49/260 filled. Covers everyone with realistic auction value.
+
+**STRUCTURAL SHIFT THAT SUPPORTS THE WR-OVERSPEND / TE-UNDERSPEND THESIS**
+2025 league-wide data: TE target share hit 23.8% — the highest rate ever recorded — and
+TEs caught 231 TDs, the most since 2013. Meanwhile WR combined target share fell to 57.9%,
+the LOWEST since 2017 and 2+ points below 2024. Only 19 WRs averaged 7+ targets/game in
+2025, down from 29 in both 2024 and 2023. Teams are shifting to 12/13 personnel.
+Targets are structurally moving from WR to TE. Our league still prices the old distribution.
+
+**COUNTER-CAVEAT — DO NOT IGNORE**
+15 TEs averaged 8+ half-PPR ppg in 2025, up from 10 in 2024. TE depth is INCREASING, which
+means our TE16 replacement level of 6.3 ppg (computed on 2022-2025) is probably TOO LOW for
+2026. A rising TE replacement level shrinks the TE edge. Before finalizing values, recompute
+TE replacement on 2025 alone and compare. If TE16 is now materially above 6.3, elite TEs are
+worth less than our current model says, and the correct play shifts from "buy an elite TE"
+toward "wait and take TE8-12 cheap."
+
+**Key TE injury/situation flags:** Kittle torn Achilles (age 33, may miss start).
+Kraft knee but ahead of schedule with Doubs AND Wicks gone from GB. LaPorta has a new OC
+(Drew Petzing) who turned McBride into the overall TE1. Pitts has a new TE-friendly OC.
+
+**Key WR moves:** A.J. Brown to NE, DJ Moore to BUF, Michael Pittman to PIT,
+Wan'Dale Robinson to TEN (rookie Carnell Tate drafted 4th overall there),
+Jaylen Waddle to DEN. Nabers returning from ACL but healthy in camp.
