@@ -1,0 +1,164 @@
+player_name,team,position,role_tier,touch_share,target_share,job_security,team_changed,new_play_caller,situation_note,confidence,last_updated
+Christian McCaffrey,SF,RB,bell_cow,,,,0,0,"Elite when healthy; age/health are the flags, not role.",medium,2026-08-18
+Jonathan Taylor,IND,RB,bell_cow,,,,0,0,Workhorse role intact.,high,2026-08-18
+Bijan Robinson,ATL,RB,bell_cow,,,,0,1,"Stefanski HC run-heavy. Allgeier gone, no RZ competition. Led NFL 2298 scrimmage yds.",high,2026-08-18
+Jahmyr Gibbs,DET,RB,bell_cow,,,,0,0,"Montgomery traded to HOU - fewer mouths. Elite dual-threat, 117 catches 2025.",high,2026-08-18
+De'Von Achane,MIA,RB,lead_committee,,,,0,1,Tua AND McDaniel both gone. Led NFL 5.7 YPC but new offense = target/TD decline risk.,medium,2026-08-18
+James Cook,BUF,RB,lead_committee,,,,0,1,"Joe Brady now HC, Carmichael OC. Continuity otherwise.",medium,2026-08-18
+Derrick Henry,BAL,RB,lead_committee,,,,0,1,McDaniel OC - new system may cut run volume. Has mocked age models repeatedly.,medium,2026-08-18
+Chase Brown,CIN,RB,lead_committee,,,,0,0,Efficient 3-down back; OL and crowded backfield are the risks.,medium,2026-08-18
+Kyren Williams,LA,RB,lead_committee,,,,0,0,Top-10 RB in FPPG three straight seasons. Consistency over upside.,high,2026-08-18
+Travis Etienne,NO,RB,lead_committee,,,,1,1,Left JAX.,medium,2026-08-18
+James Conner,ARI,RB,,,,,0,0,,,
+Javonte Williams,DAL,RB,bell_cow,,,,0,0,RB1 value 2025 as workhorse; paid to return to that role.,high,2026-08-18
+Joe Mixon,HOU,RB,backup,,,,0,1,Montgomery reported as featured back in HOU.,low,2026-08-18
+Josh Jacobs,GB,RB,lead_committee,,,,0,0,"RISK: May arrest, investigation ongoing. Role safe if available.",low,2026-08-18
+Ashton Jeanty,LV,RB,bell_cow,,,,0,1,Kubiak OC heavy personnel. Also gets Cousins checkdowns.,medium,2026-08-18
+Saquon Barkley,PHI,RB,lead_committee,,,,0,1,Sean Mannion first-time OC. Reverted across the board in 2025 after 2024 outlier.,medium,2026-08-18
+D'Andre Swift,CHI,RB,even_committee,,,,0,0,Monangai's share grew late 2025. Ben Johnson uses two backs.,medium,2026-08-18
+Jaylen Warren,PIT,RB,even_committee,,,,0,1,UPDATE Aug: now behind Dowdle per camp reports. Still PPR-relevant.,medium,2026-08-18
+Rico Dowdle,PIT,RB,lead_committee,,,,1,1,UPDATE Aug: multiple reports have Dowdle as primary runner AHEAD of Warren. McCarthy favorite from Dallas.,medium,2026-08-18
+Breece Hall,NYJ,RB,lead_committee,,,,0,0,,medium,2026-08-18
+TreVeyon Henderson,NE,RB,lead_committee,,,,0,1,'Backup in name only' - 25.1% touch share vs Stevenson 18.9%.,medium,2026-08-18
+Najee Harris,PIT,RB,,,,,0,0,,,
+Kenny Gainwell,PIT,RB,,,,,0,0,,,
+RJ Harvey,DEN,RB,even_committee,,,,0,0,2025 production came mostly with Dobbins hurt. Coleman also drafted.,medium,2026-08-18
+Kenneth Walker III,SEA,RB,,,,,0,0,,,
+Zach Charbonnet,SEA,RB,handcuff,,,,0,1,Returning from torn ACL.,low,2026-08-18
+Tony Pollard,TEN,RB,lead_committee,,,,0,0,,medium,2026-08-18
+Rhamondre Stevenson,NE,RB,even_committee,,,,0,1,Started 13 of 14 in 2025 despite Henderson hype.,medium,2026-08-18
+Quinshon Judkins,CLE,RB,bell_cow,,,,0,1,Monken featured Chubb and Henry as bell cows.,medium,2026-08-18
+David Montgomery,HOU,RB,lead_committee,,,,1,1,"Traded to HOU, reports say featured back. Worst season 2025 (8.5 half-PPR).",medium,2026-08-18
+Tyrone Tracy Jr.,NYG,RB,,,,,0,0,,,
+Kyle Monangai,CHI,RB,even_committee,,,,0,0,Near 50-50 split likely. Cheaper than Swift.,medium,2026-08-18
+Kareem Hunt,KC,RB,,,,,0,0,,,
+Jacory Croskey-Merritt,WAS,RB,even_committee,,,,0,1,1-2 punch with White.,low,2026-08-18
+Woody Marks,HOU,RB,,,,,0,0,,,
+Bucky Irving,TB,RB,lead_committee,,,,0,0,20.4 touches/gm led his tier but 50th in RYOE. Gainwell/Tucker could eat in.,medium,2026-08-18
+Rachaad White,WAS,RB,lead_committee,,,,1,1,50+ catches in 3 of 4 seasons. Thin WR room past McLaurin. Half-PPR target.,medium,2026-08-18
+Jordan Mason,MIN,RB,even_committee,,,,0,0,Could be named starter over Jones.,low,2026-08-18
+Omarion Hampton,LAC,RB,lead_committee,,,,0,1,Yr2. Rookie injuries. Going in first 15 picks - market above our model.,medium,2026-08-18
+Alexander Mattison,LV,RB,,,,,0,0,,,
+Blake Corum,LA,RB,handcuff,,,,0,0,,low,2026-08-18
+Tyler Allgeier,ATL,RB,,,,,0,0,,,
+Cam Skattebo,NYG,RB,lead_committee,,,,0,1,"Starter. Nagy OC / Roman influence, heavy formations.",medium,2026-08-18
+Austin Ekeler,WAS,RB,,,,,0,0,,,
+J.K. Dobbins,DEN,RB,lead_committee,,,,0,0,Harvey averaged 7.5 touches when Dobbins active.,medium,2026-08-18
+Chuba Hubbard,CAR,RB,even_committee,,,,0,0,"UPDATE Aug: hamstring, weeks-long absence. Brooks overtaking him.",low,2026-08-18
+Kimani Vidal,LAC,RB,,,,,0,0,,,
+Aaron Jones,MIN,RB,even_committee,,,,0,0,Jordan Mason competing for starts; Jones keeps passing-down work either way.,low,2026-08-18
+Devin Singletary,NYG,RB,,,,,0,0,,,
+Chris Rodriguez Jr.,WAS,RB,,,,,0,0,,,
+Tyjae Spears,TEN,RB,,,,,0,0,,,
+Ty Johnson,BUF,RB,,,,,0,0,,,
+Sean Tucker,TB,RB,,,,,0,0,,,
+Emanuel Wilson,GB,RB,,,,,0,0,,,
+Alvin Kamara,NO,RB,,,,,0,0,,,
+Bhayshul Tuten,JAX,RB,lead_committee,,,,0,0,Etienne gone. Rodriguez is short-yardage/backup. Named a potential league-winner.,medium,2026-08-18
+Michael Carter,ARI,RB,,,,,0,0,,,
+Bam Knight,ARI,RB,,,,,0,0,,,
+Nick Chubb,HOU,RB,backup,,,,0,1,,low,2026-08-18
+Isiah Pacheco,DET,RB,handcuff,,,,1,0,Now Gibbs handcuff in DET. Value only if Gibbs misses time.,medium,2026-08-18
+Dylan Sampson,CLE,RB,,,,,0,0,,,
+Zack Moss,CIN,RB,,,,,0,0,,,
+Samaje Perine,CIN,RB,,,,,0,0,,,
+Gus Edwards,LAC,RB,,,,,0,0,,,
+Isaiah Davis,NYJ,RB,,,,,0,0,,,
+Jeremy McNichols,WAS,RB,,,,,0,0,,,
+Ray Davis,BUF,RB,,,,,0,0,,,
+Brian Robinson,SF,RB,,,,,0,0,,,
+Justice Hill,BAL,RB,,,,,0,0,,,
+Tank Bigsby,PHI,RB,handcuff,,,,0,1,Barkley handcuff.,low,2026-08-18
+Emari Demercado,ARI,RB,,,,,0,0,,,
+Ezekiel Elliott,DAL,RB,,,,,0,0,,,
+Devin Neal,NO,RB,,,,,0,0,,,
+Keaton Mitchell,BAL,RB,,,,,0,0,,,
+Brashard Smith,KC,RB,,,,,0,0,,,
+Ollie Gordon II,MIA,RB,,,,,0,0,,,
+Trey Sermon,IND,RB,,,,,0,0,,,
+Jaylen Wright,MIA,RB,,,,,0,0,,,
+Audric Estimé,NO,RB,,,,,0,0,,,
+Malik Davis,DAL,RB,,,,,0,0,,,
+Jamaal Williams,NO,RB,,,,,0,0,,,
+Zavier Scott,MIN,RB,,,,,0,0,,,
+Cordarrelle Patterson,PIT,RB,,,,,0,0,,,
+Kendre Miller,NO,RB,,,,,0,0,,,
+Jerome Ford,CLE,RB,,,,,0,0,,,
+Hunter Luepke,DAL,RB,,,,,0,0,,,
+Ameer Abdullah,IND,RB,,,,,0,0,,,
+D'Onta Foreman,CLE,RB,,,,,0,0,,,
+Jaleel McLaughlin,DEN,RB,,,,,0,0,,,
+Trey Benson,ARI,RB,,,,,0,0,,,
+Patrick Taylor,SF,RB,,,,,0,0,,,
+Pierre Strong,CLE,RB,,,,,0,0,,,
+Jawhar Jordan,HOU,RB,,,,,0,0,,,
+Chris Brooks,GB,RB,,,,,0,0,,,
+Tyler Badie,DEN,RB,,,,,0,0,,,
+Ty Chandler,MIN,RB,,,,,0,0,,,
+Sincere McCormick,LV,RB,,,,,0,0,,,
+Jaret Patterson,LAC,RB,,,,,0,0,,,
+JaMycal Hasty,NE,RB,,,,,0,0,,,
+Raheem Mostert,LV,RB,,,,,0,0,,,
+Miles Sanders,DAL,RB,,,,,0,0,,,
+Antonio Gibson,NE,RB,,,,,0,0,,,
+Kenny McIntosh,SEA,RB,,,,,0,0,,,
+Carson Steele,KC,RB,,,,,0,0,,,
+Jordan Mims,NO,RB,,,,,0,0,,,
+Jaydon Blue,DAL,RB,,,,,0,0,,,
+LeQuint Allen Jr.,JAX,RB,,,,,0,0,,,
+George Holani,SEA,RB,,,,,0,0,,,
+Rasheen Ali,BAL,RB,,,,,0,0,,,
+Dare Ogunbowale,HOU,RB,,,,,0,0,,,
+Raheim Sanders,CLE,RB,,,,,0,0,,,
+Will Shipley,PHI,RB,,,,,0,0,,,
+Terrell Jennings,NE,RB,,,,,0,0,,,
+Eric Gray,NYG,RB,,,,,0,0,,,
+Braelon Allen,NYJ,RB,handcuff,,,,0,0,,low,2026-08-18
+Trayveon Williams,CLE,RB,,,,,0,0,,,
+Trevor Etienne,CAR,RB,,,,,0,0,,,
+Kene Nwangwu,NYJ,RB,,,,,0,0,,,
+Deuce Vaughn,DAL,RB,,,,,0,0,,,
+DJ Giddens,IND,RB,,,,,0,0,,,
+Jeff Wilson,MIA,RB,,,,,0,0,,,
+Corey Kiner,ARI,RB,,,,,0,0,,,
+Kaleb Johnson,PIT,RB,backup,,,,0,1,Third in a PIT committee.,low,2026-08-18
+Raheem Blackshear,CAR,RB,,,,,0,0,,,
+Hassan Haskins,LAC,RB,,,,,0,0,,,
+British Brooks,HOU,RB,,,,,0,0,,,
+AJ Dillon,PHI,RB,,,,,0,0,,,
+Zamir White,LV,RB,,,,,0,0,,,
+Cam Akers,SEA,RB,,,,,0,0,,,
+Khalil Herbert,NYJ,RB,,,,,0,0,,,
+Evan Hull,NO,RB,,,,,0,0,,,
+Tahj Brooks,CIN,RB,,,,,0,0,,,
+Mike Boone,CAR,RB,,,,,0,0,,,
+Ronnie Rivers,LA,RB,,,,,0,0,,,
+Tyler Goodson,IND,RB,,,,,0,0,,,
+Dylan Laube,LV,RB,,,,,0,0,,,
+Julius Chestnut,TEN,RB,,,,,0,0,,,
+Reggie Gilliam,BUF,RB,,,,,0,0,,,
+Dameon Pierce,KC,RB,,,,,0,0,,,
+D'Ernest Johnson,NE,RB,,,,,0,0,,,
+Jonathan Ward,PIT,RB,,,,,0,0,,,
+DeeJay Dallas,JAX,RB,,,,,0,0,,,
+Roschon Johnson,CHI,RB,,,,,0,0,,,
+Patrick Ricard,BAL,RB,,,,,0,0,,,
+Myles Gaskin,MIN,RB,,,,,0,0,,,
+Chris Collier,LV,RB,,,,,0,0,,,
+Jacob Saylors,DET,RB,,,,,0,0,,,
+Kalel Mullings,TEN,RB,,,,,0,0,,,
+Sione Vaki,DET,RB,,,,,0,0,,,
+Craig Reynolds,DET,RB,,,,,0,0,,,
+Brady Russell,SEA,RB,,,,,0,0,,,
+Avery Williams,ATL,RB,,,,,0,0,,,
+Isaac Guerendo,SF,RB,,,,,0,0,,,
+Robbie Ouzts,SEA,RB,,,,,0,0,,,
+Nyheim Hines,NO,RB,,,,,0,0,,,
+Travis Homer,CHI,RB,,,,,0,0,,,
+Kenneth Walker,KC,RB,bell_cow,,,,1,1,Reid funnels touches to lead back. Demercado pass-pro RB2. Big FA payday.,medium,2026-08-18
+Jadarian Price,SEA,RB,lead_committee,,,,0,1,Rookie 1st-rounder. Holani got 1st-team OTA reps.,low,2026-08-18
+Tyrone Tracy,NYG,RB,handcuff,,,,0,1,Skattebo starter. Tracy top-20 upside if Skattebo misses time.,medium,2026-08-18
+Jeremiyah Love,ARI,RB,lead_committee,,,,0,0,Rookie. Talent is real but rookie-on-weak-team trap noted by analysts.,low,2026-08-18
+Jonathon Brooks,CAR,RB,lead_committee,,,,0,0,UPDATE Aug: Hubbard hamstring has catapulted Brooks up boards. 2 ACLs is the risk.,low,2026-08-18
+Emmett Johnson,KC,RB,backup,,,,0,1,Rookie. Better receiver than Walker/Demercado - could take 3rd down work.,low,2026-08-18
+Chris Rodriguez,JAX,RB,backup,,,,0,0,Short-yardage/TD role behind Tuten. 6 career catches.,low,2026-08-18

@@ -80,3 +80,18 @@ Key finding already: QB replacement level is 12.2 ppg in this league vs 16.1 ppg
 ## Data source
 
 nflverse GitHub releases. Weekly stats use the `stats_player` release (`stats_player_week_{season}.parquet`), which covers 2018–2025 with a consistent 150-column schema. The older `player_stats` release has a different naming convention and does not include 2025 — don't use it.
+
+### Phase 3 RB status (updated 2026-08-18)
+50 of 163 RB rows filled — covers every back with realistic auction value.
+The remaining ~113 are deep bench/practice-squad names that will go for $1 or undrafted.
+
+**Late-breaking camp items that changed earlier entries:**
+- Chuba Hubbard: hamstring, weeks-long absence. Jonathon Brooks rising fast in CAR.
+- Rico Dowdle now reported as PIT's primary runner slightly AHEAD of Jaylen Warren
+  (McCarthy favorite from their Dallas years). Reverses the earlier even-split entry.
+- Josh Jacobs: May arrest, investigation ongoing. Role is safe if he plays — availability is the risk.
+- Achane lost both Tua and Mike McDaniel; Miami's offense is materially different.
+- Montgomery traded DET->HOU and is reported as Houston's featured back.
+- Pacheco is now a Gibbs handcuff in Detroit, not a starter.
+
+These are the volatile rows. Re-check in the final week before the draft.
