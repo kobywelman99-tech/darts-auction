@@ -98,11 +98,16 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     """
     Phase 3 projection: opportunity CSVs → projected ppg.
 
-    Model: proj_ppg = opportunity × efficiency × job_security
+    Model: proj_ppg = opportunity × efficiency
+
+    job_security does NOT enter the projection formula — it belongs in
+    draft_state.py as a ceiling discount on the bid price. Applying it here
+    would double-count risk because efficiency rates are computed from games
+    the player actually played (survival already baked in).
 
     OPPORTUNITY (from data/opportunity/{pos}_2026.csv)
       role_tier  →  touch_share (RB) or target_share (WR/TE)
-      shares × league-average team volume × job_security = risk-adjusted touches/targets per game
+      shares × league-average team volume = raw projected touches/targets per game
 
     EFFICIENCY (from 2023-2025 history)
       pts_per_carry  = season rushing pts / carries
@@ -221,19 +226,22 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
         )
 
     # ── 4. Compute proj_ppg ──────────────────────────────────────────────────
-    # RBs: rushing volume from opportunity layer; receiving from historical rate × job_security
-    # WR/TE: receiving volume from opportunity layer; no rushing component
-    job_sec = merged["job_security"].fillna(0.5)
-    risk_carries = merged["risk_adj_carries_pg"].fillna(0.0)
-    risk_targets = merged["risk_adj_targets_pg"].fillna(0.0)
+    # Use raw projected volume (no job_security discount here). job_security
+    # belongs only in draft_state.py as a ceiling discount — applying it here
+    # would double-count it because efficiency was measured from games actually
+    # played (i.e., the player already survived to play those snaps).
+    #
+    # RBs: rushing volume from opportunity layer; receiving from historical rate.
+    # WR/TE: receiving volume from opportunity layer; no rushing component.
+    raw_carries  = merged["proj_carries_pg"].fillna(0.0)
+    raw_targets  = merged["proj_targets_pg"].fillna(0.0)
 
-    # RB receiving: hist targets_pg × job_security (carries come with the role)
     rb_mask = merged_pos == "RB"
-    rb_rec  = merged["hist_targets_pg"].fillna(0.0) * job_sec
-    effective_targets = np.where(rb_mask, rb_rec, risk_targets)
+    rb_rec  = merged["hist_targets_pg"].fillna(0.0)
+    effective_targets = np.where(rb_mask, rb_rec, raw_targets)
 
     merged["proj_ppg"] = (
-        risk_carries * merged["pts_per_carry"].fillna(0.0)
+        raw_carries * merged["pts_per_carry"].fillna(0.0)
         + effective_targets * merged["pts_per_target"].fillna(0.0)
     )
 
@@ -242,7 +250,7 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     merged["_age"]  = merged["age"]   # comes only from eff_cols join; NaN for rookies
 
     opp_proj = merged[[
-        "player_name", "_pos", "_team", "_age", "proj_ppg"
+        "player_name", "_pos", "_team", "_age", "proj_ppg", "role_tier"
     ]].rename(columns={
         "player_name": "player_display_name",
         "_pos":  "position",
@@ -261,6 +269,60 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     result = pd.concat([opp_proj, fallback], ignore_index=True)
     result = result.drop_duplicates(subset="player_display_name", keep="first")
     return result.reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
+# Weekly consistency metrics (for WR bucket classification)
+# ---------------------------------------------------------------------------
+
+def _compute_consistency() -> pd.DataFrame:
+    """
+    Score each WR/TE game from the last two seasons and compute:
+      weekly_std    standard deviation of per-game fantasy points
+      floor_rate    fraction of games scoring >= 8 ppg (startable threshold)
+      weekly_median median per-game score
+
+    These are used in mock_draft.py to sort WRs into bidding buckets:
+    alpha (high floor, target certainty), upside (high variance), floor (reliable).
+
+    Returns a DataFrame keyed by player_display_name. Players with fewer than
+    8 recorded games are excluded — sample is too small to be meaningful.
+    """
+    from scoring import score_offense
+
+    FLOOR_PPG = 8.0
+    data_dir = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
+
+    frames = []
+    for yr in [2024, 2025]:
+        path = os.path.join(data_dir, f"weekly_{yr}.parquet")
+        if not os.path.exists(path):
+            continue
+        wk = pd.read_parquet(path)
+        if "season_type" in wk.columns:
+            wk = wk[wk["season_type"] == "REG"]
+        if "position" in wk.columns:
+            wk = wk[wk["position"].isin(["WR", "TE"])]
+        frames.append(wk)
+
+    if not frames:
+        return pd.DataFrame(columns=["player_display_name", "weekly_std",
+                                     "floor_rate", "weekly_median"])
+
+    df = pd.concat(frames, ignore_index=True)
+    df["game_pts"] = score_offense(df)
+
+    agg = (
+        df.groupby("player_display_name")
+        .agg(
+            weekly_std=("game_pts", "std"),
+            weekly_median=("game_pts", "median"),
+            floor_rate=("game_pts", lambda x: (x >= FLOOR_PPG).mean()),
+            _n=("game_pts", "count"),
+        )
+        .reset_index()
+    )
+    return agg[agg["_n"] >= 8].drop(columns="_n").reset_index(drop=True)
 
 
 # ---------------------------------------------------------------------------
@@ -385,6 +447,7 @@ def compute_values(
         "raw_price":           [float(min_bid)] * DEF_SLOTS,
         "price":               [min_bid] * DEF_SLOTS,
         "is_drafted":          [True] * DEF_SLOTS,
+        "role_tier":           [np.nan] * DEF_SLOTS,
     })
 
     off_rest["par"]        = 0.0
@@ -403,6 +466,19 @@ def compute_values(
         .sort_values("price", ascending=False)
         .reset_index(drop=True)
     )
+
+    # Merge weekly consistency for WR/TE bucket classification in mock_draft.
+    # Defaults for players with no weekly history (rookies, QBs, DEF):
+    #   weekly_std = 5.5  (near-median variance — neither alpha nor extreme upside)
+    #   floor_rate = 0.40 (below the startable threshold most weeks)
+    #   weekly_median = 6.0
+    consistency = _compute_consistency()
+    if not consistency.empty:
+        board = board.merge(consistency, on="player_display_name", how="left")
+    board["weekly_std"]    = board.get("weekly_std",    pd.Series(dtype=float)).fillna(5.5)
+    board["floor_rate"]    = board.get("floor_rate",    pd.Series(dtype=float)).fillna(0.40)
+    board["weekly_median"] = board.get("weekly_median", pd.Series(dtype=float)).fillna(6.0)
+
     return board
 
 

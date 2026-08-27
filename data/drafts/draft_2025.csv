@@ -1,0 +1,151 @@
+pick,player,position,nfl_team,salary,fantasy_team
+1,Ja'Marr Chase,WR,Cin,60,Chasing Mason
+2,Puka Nacua,WR,LAR,35,MERDY
+3,Bijan Robinson,RB,Atl,57,The Ra-volution
+4,Justin Jefferson,WR,Min,48,Chasing Mason
+5,Josh Allen,QB,Buf,60,Chasing Mason
+6,Saquon Barkley,RB,Phi,68,King
+7,Patrick Mahomes,QB,KC,37,Team Taruchus
+8,Joe Burrow,QB,Cin,46,King
+9,Jahmyr Gibbs,RB,Det,50,Field Njigbas
+10,CeeDee Lamb,WR,Dal,49,Field Njigbas
+11,Nico Collins,WR,Hou,41,Justin's (not J...
+12,Tyreek Hill,WR,Mia,21,King
+13,Christian McCaffrey,RB,SF,50,MERDY
+14,Malik Nabers,WR,NYG,39,Who needs a qb?
+15,Lamar Jackson,QB,Bal,63,Itty Bitty Pitts ...
+16,Amon-Ra St. Brown,WR,Det,44,The Ra-volution
+17,James Cook III,RB,Buf,27,Team Taruchus
+18,A.J. Brown,WR,NE,31,Itty Bitty Pitts ...
+19,Jalen Hurts,QB,Phi,56,My Nix Hurts
+20,Chase Brown,RB,Cin,27,Team Taruchus
+21,Derrick Henry,RB,Bal,49,The Ra-volution
+22,Brock Bowers,TE,LV,30,Team Taruchus
+23,Jonathan Taylor,RB,Ind,41,My Nix Hurts
+24,Kyren Williams,RB,LAR,29,Itty Bitty Pitts ...
+25,Ashton Jeanty,RB,LV,38,Who needs a qb?
+26,De'Von Achane,RB,Mia,34,Justin's (not J...
+27,Alvin Kamara,RB,NO,16,Justin's (not J...
+28,Jordan Love,QB,GB,26,Team Taruchus
+29,Brian Thomas Jr.,WR,Jax,35,Team Taruchus
+30,Bucky Irving,RB,TB,33,Who needs a qb?
+31,Drake London,WR,Atl,32,Who needs a qb?
+32,Jayden Daniels,QB,Was,57,MERDY
+33,Tee Higgins,WR,Cin,21,Itty Bitty Pitts ...
+34,Chuba Hubbard,RB,Car,11,Justin's (not J...
+35,Josh Jacobs,RB,GB,36,Field Njigbas
+36,Dak Prescott,QB,Dal,19,The Ra-volution
+37,James Conner,RB,Ari,12,Justin's (not J...
+38,Trey McBride,TE,Ari,21,King
+39,Ladd McConkey,WR,LAC,23,Itty Bitty Pitts ...
+40,George Kittle,TE,SF,20,Justin's (not J...
+41,Omarion Hampton,RB,LAC,34,My Nix Hurts
+42,Davante Adams,WR,LAR,14,My Nix Hurts
+43,Breece Hall,RB,NYJ,11,My Nix Hurts
+44,Kenneth Walker III,RB,KC,11,MERDY
+45,Bo Nix,QB,Den,26,My Nix Hurts
+46,D'Andre Swift,RB,Chi,5,Chasing Mason
+47,Zay Flowers,WR,Bal,6,Field Njigbas
+48,Tony Pollard,RB,Ten,7,King
+49,Broncos,DEF,Den,2,Field Njigbas
+50,Isiah Pacheco,RB,Det,4,MERDY
+51,Bills,DEF,Buf,1,Justin's (not J...
+52,Mike Evans,WR,SF,20,King
+53,Caleb Williams,QB,Chi,12,The Ra-volution
+54,Jaxon Smith-Njigba,WR,Sea,19,Field Njigbas
+55,Baker Mayfield,QB,TB,28,Who needs a qb?
+56,J.J. McCarthy,QB,Min,11,Justin's (not J...
+57,Travis Hunter,WR,Jax,5,Chasing Mason
+58,Jared Goff,QB,Det,10,Justin's (not J...
+59,Kyler Murray,QB,Min,17,Justin's (not J...
+60,DK Metcalf,WR,Pit,10,Justin's (not J...
+61,TreVeyon Henderson,RB,NE,14,Itty Bitty Pitts ...
+62,Garrett Wilson,WR,NYJ,11,MERDY
+63,Justin Fields,QB,KC,10,Field Njigbas
+64,Terry McLaurin,WR,Was,11,Field Njigbas
+65,Justin Herbert,QB,LAC,11,Who needs a qb?
+66,Trevor Lawrence,QB,Jax,3,Chasing Mason
+67,Mark Andrews,TE,Bal,2,Field Njigbas
+68,Marvin Harrison Jr.,WR,Ari,11,Justin's (not J...
+69,Ravens,DEF,Bal,1,Who needs a qb?
+70,David Montgomery,RB,Hou,3,The Ra-volution
+71,Brock Purdy,QB,SF,11,MERDY
+72,DeVonta Smith,WR,Phi,11,MERDY
+73,Tua Tagovailoa,QB,Atl,3,Field Njigbas
+74,Aaron Jones Sr.,RB,Min,3,Field Njigbas
+75,Sam LaPorta,TE,Det,4,The Ra-volution
+76,Michael Penix Jr.,QB,Atl,2,Itty Bitty Pitts ...
+77,RJ Harvey,RB,Den,5,Team Taruchus
+78,Tetairoa McMillan,WR,Car,8,Itty Bitty Pitts ...
+79,Courtland Sutton,WR,Den,7,My Nix Hurts
+80,Jameson Williams,WR,Det,6,Field Njigbas
+81,George Pickens,WR,Dal,6,Team Taruchus
+82,T.J. Hockenson,TE,Min,2,My Nix Hurts
+83,Aaron Rodgers,QB,Pit,1,Field Njigbas
+84,Travis Kelce,TE,KC,2,Chasing Mason
+85,Rashee Rice,WR,KC,2,Who needs a qb?
+86,Matthew Stafford,QB,LAR,2,King
+87,Deebo Samuel Sr.,WR,SF,1,My Nix Hurts
+88,Jerry Jeudy,WR,Cle,1,King
+89,Jaylen Waddle,WR,Den,1,Who needs a qb?
+90,Calvin Ridley,WR,Ten,3,The Ra-volution
+91,Rome Odunze,WR,Chi,2,The Ra-volution
+92,Tucker Kraft,TE,GB,1,MERDY
+93,Xavier Worthy,WR,KC,4,Justin's (not J...
+94,DJ Moore,WR,Buf,3,My Nix Hurts
+95,Tyrone Tracy Jr.,RB,NYG,3,Chasing Mason
+96,Kaleb Johnson,RB,Pit,2,MERDY
+97,Chris Olave,WR,NO,1,My Nix Hurts
+98,Jaylen Warren,RB,Pit,1,King
+99,Ricky Pearsall,WR,SF,1,Who needs a qb?
+100,Jordan Addison,WR,Min,1,Itty Bitty Pitts ...
+101,David Njoku,TE,LAC,1,Justin's (not J...
+102,Drake Maye,QB,NE,4,Who needs a qb?
+103,Keenan Allen,WR,LAC,1,Field Njigbas
+104,Darren Waller,TE,Car,1,The Ra-volution
+105,Emeka Egbuka,WR,TB,3,Chasing Mason
+106,Jordan Mason,RB,Min,3,Chasing Mason
+107,Javonte Williams,RB,Dal,1,My Nix Hurts
+108,Cam Ward,QB,Ten,3,King
+109,Tyler Warren,TE,Ind,1,Who needs a qb?
+110,C.J. Stroud,QB,Hou,3,MERDY
+111,Jakobi Meyers,WR,Jax,2,King
+112,Stefon Diggs,WR,Was,2,King
+113,J.K. Dobbins,RB,Den,1,Field Njigbas
+114,Joe Mixon,RB,Hou,2,Chasing Mason
+115,Tank Bigsby,RB,Phi,2,Itty Bitty Pitts ...
+116,Matthew Golden,WR,GB,2,Who needs a qb?
+117,Sam Darnold,QB,Sea,2,Itty Bitty Pitts ...
+118,Browns,DEF,Cle,1,King
+119,Chris Godwin Jr.,WR,TB,1,Who needs a qb?
+120,Jacory Croskey-Merritt,RB,Was,1,Itty Bitty Pitts ...
+121,Quinshon Judkins,RB,Cle,1,Justin's (not J...
+122,Khalil Shakir,WR,Buf,1,MERDY
+123,Cooper Kupp,WR,Sea,1,The Ra-volution
+124,Jauan Jennings,WR,Min,1,Team Taruchus
+125,Isaac Guerendo,RB,SF,1,Chasing Mason
+126,Eagles,DEF,Phi,1,My Nix Hurts
+127,Evan Engram,TE,Den,4,Who needs a qb?
+128,Kyle Pitts Sr.,TE,Atl,1,Itty Bitty Pitts ...
+129,Jayden Reed,WR,GB,1,MERDY
+130,Travis Etienne Jr.,RB,NO,2,King
+131,Michael Pittman Jr.,WR,Pit,1,Team Taruchus
+132,Jayden Higgins,WR,Hou,1,Chasing Mason
+133,Geno Smith,QB,NYJ,2,Chasing Mason
+134,Keon Coleman,WR,Buf,1,King
+135,Joshua Palmer,WR,Buf,1,Itty Bitty Pitts ...
+136,Braelon Allen,RB,NYJ,1,MERDY
+137,Nick Chubb,RB,Hou,1,The Ra-volution
+138,Josh Downs,WR,Ind,1,Team Taruchus
+139,Darnell Mooney,WR,NYG,1,Chasing Mason
+140,Brian Robinson,RB,Atl,1,My Nix Hurts
+141,Blake Corum,RB,LAR,1,Itty Bitty Pitts ...
+142,Lions,DEF,Det,1,MERDY
+143,Anthony Richardson Sr.,QB,Ind,1,The Ra-volution
+144,Bryce Young,QB,Car,2,The Ra-volution
+145,Daniel Jones,QB,Ind,1,My Nix Hurts
+146,Zach Charbonnet,RB,Sea,1,The Ra-volution
+147,Russell Wilson,QB,NYG,1,Team Taruchus
+148,Steelers,DEF,Pit,1,Team Taruchus
+149,Adam Thielen,WR,Pit,1,Team Taruchus
+150,Brandon Aiyuk,WR,SF,1,Team Taruchus

@@ -1,5 +1,5 @@
 player_name,team,position,role_tier,touch_share,target_share,job_security,team_changed,new_play_caller,situation_note,confidence,last_updated
-Trey McBride,ARI,TE,te1,,,,0,0,"NFL single-season TE reception record 2025: 126/169 tgts, 1239 yds, 11 TD. 14.4 half-PPR ppg, next best was 12.1.",high,2026-08-18
+Trey McBride,ARI,TE,featured_te,,,,0,0,"NFL single-season TE reception record 2025: 126/169 tgts, 1239 yds, 11 TD. 14.4 half-PPR ppg, next best was 12.1.",high,2026-08-18
 Kyle Pitts,ATL,TE,te1,,,,0,1,New OC with history of 25%+ of team targets to TEs. Quality 2025 campaign. Often available rounds 7+.,medium,2026-08-18
 Travis Kelce,KC,TE,te1,,,,0,0,Not the same athlete but still a target hog at a thin position. Available in double-digit rounds.,medium,2026-08-18
 Dallas Goedert,PHI,TE,te1,,,,0,1,Tied for TE TD lead (11) in 2025. Mannion first-time OC.,medium,2026-08-18
@@ -7,7 +7,7 @@ Tyler Warren,IND,TE,te1,,,,0,0,Led Colts in targets as rookie (112). Pittman tra
 Harold Fannin Jr.,CLE,TE,,,,,0,0,,,
 Hunter Henry,NE,TE,te2,,,,0,1,A.J. Brown arrival cuts into the room.,low,2026-08-18
 Jake Ferguson,DAL,TE,te1,,,,0,0,TE5 in 2025 with healthy Dak; TE9 in 2023 same condition. 3rd among TEs in targets/receptions since 2023 but only TE12 ADP. 7.3 yds/catch is the flag.,medium,2026-08-18
-Brock Bowers,LV,TE,te1,,,,0,1,14.5+ rec PPR ppg both seasons despite bottom-3 team passing. Cousins/Mendoza upgrade over Geno. No true WR1 = 150+ targets.,high,2026-08-18
+Brock Bowers,LV,TE,featured_te,,,,0,1,14.5+ rec PPR ppg both seasons despite bottom-3 team passing. Cousins/Mendoza upgrade over Geno. No true WR1 = 150+ targets.,high,2026-08-18
 Juwan Johnson,NO,TE,,,,,0,0,,,
 Dalton Schultz,HOU,TE,,,,,0,0,,,
 Colston Loveland,CHI,TE,te1,,,,0,0,"TE2 from Wk9 on. Final 4 games: 10+ targets each, ~12 looks and 95 yds/gm. DJ Moore gone = less competition.",high,2026-08-18

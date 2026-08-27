@@ -1,0 +1,161 @@
+pick,player,position,nfl_team,salary,fantasy_team
+1,Breece Hall,RB,NYJ,60,Who needs a qb?
+2,Bijan Robinson,RB,Atl,63,The Big Arch
+3,Garrett Wilson,WR,NYJ,41,Who needs a qb?
+4,Puka Nacua,WR,LAR,35,Congrats on the w...
+5,Christian McCaffrey,RB,SF,70,Return of the Mac
+6,Aaron Rodgers,QB,Pit,6,Who needs a qb?
+7,CeeDee Lamb,WR,Dal,53,FNU
+8,Saquon Barkley,RB,Phi,46,FNU
+9,Justin Jefferson,WR,Min,53,MERDY
+10,Tyreek Hill,WR,Mia,57,The Big Arch
+11,Jonathan Taylor,RB,Ind,52,King
+12,Amon-Ra St. Brown,WR,Det,47,Collusion Campers
+13,Isiah Pacheco,RB,Det,30,King
+14,Josh Allen,QB,Buf,58,Congrats on the w...
+15,Ja'Marr Chase,WR,Cin,50,MERDY
+16,Joe Burrow,QB,Cin,22,Team Taruchus
+17,Kyren Williams,RB,LAR,37,Congrats on the w...
+18,Travis Kelce,TE,KC,26,Team Taruchus
+19,Davante Adams,WR,LAR,25,King
+20,Jalen Hurts,QB,Phi,34,jamie's Ingenious...
+21,A.J. Brown,WR,NE,43,Congrats on the w...
+22,Travis Etienne Jr.,RB,NO,32,Collusion Campers
+23,Sam LaPorta,TE,Det,20,jamie's Ingenious...
+24,Patrick Mahomes,QB,KC,51,FNU
+25,Jahmyr Gibbs,RB,Det,39,Team Taruchus
+26,Jordan Love,QB,GB,25,Collusion Campers
+27,Kyler Murray,QB,Min,37,Who needs a qb?
+28,De'Von Achane,RB,Mia,32,Team Taruchus
+29,Cooper Kupp,WR,Sea,27,King
+30,Lamar Jackson,QB,Bal,55,Collusion Campers
+31,Derrick Henry,RB,Bal,39,jamie's Ingenious...
+32,Marvin Harrison Jr.,WR,Ari,32,Team Taruchus
+33,Michael Pittman Jr.,WR,Pit,14,The Big Arch
+34,Anthony Richardson Sr.,QB,Ind,43,MERDY
+35,Mike Evans,WR,SF,14,jamie's Ingenious...
+36,Brandon Aiyuk,WR,SF,24,King
+37,Drake London,WR,Atl,30,Team Taruchus
+38,Joe Mixon,RB,Hou,16,MERDY
+39,Chris Olave,WR,NO,28,Return of the Mac
+40,Deebo Samuel Sr.,WR,SF,20,Return of the Mac
+41,Jaylen Waddle,WR,Den,18,Who needs a qb?
+42,Rachaad White,RB,Was,16,The Big Arch
+43,Stefon Diggs,WR,Was,8,FNU
+44,Nico Collins,WR,Hou,19,jamie's Ingenious...
+45,Josh Jacobs,RB,GB,27,FNU
+46,Deshaun Watson,QB,Cle,10,jamie's Ingenious...
+47,Jayden Daniels,QB,Was,18,King
+48,Kenneth Walker III,RB,KC,17,MERDY
+49,DJ Moore,WR,Buf,16,Return of the Mac
+50,C.J. Stroud,QB,Hou,32,The Big Arch
+51,Rashee Rice,WR,KC,7,Who needs a qb?
+52,Alvin Kamara,RB,NO,11,jamie's Ingenious...
+53,Aaron Jones Sr.,RB,Min,10,Collusion Campers
+54,Dak Prescott,QB,Dal,25,jamie's Ingenious...
+55,DK Metcalf,WR,Pit,19,Collusion Campers
+56,Brock Purdy,QB,SF,10,Return of the Mac
+57,Mark Andrews,TE,Bal,9,Return of the Mac
+58,Trey McBride,TE,Ari,9,MERDY
+59,DeVonta Smith,WR,Phi,13,jamie's Ingenious...
+60,Amari Cooper,WR,Buf,5,Return of the Mac
+61,James Cook III,RB,Buf,11,Return of the Mac
+62,Najee Harris,RB,LAC,1,The Big Arch
+63,Tank Dell,WR,Hou,7,King
+64,Kirk Cousins,QB,LV,4,Team Taruchus
+65,Malik Nabers,WR,NYG,10,Who needs a qb?
+66,Ravens,DEF,Bal,1,FNU
+67,Trevor Lawrence,QB,Jax,5,Return of the Mac
+68,George Kittle,TE,SF,2,jamie's Ingenious...
+69,Kyle Pitts Sr.,TE,Atl,1,King
+70,David Montgomery,RB,Hou,6,jamie's Ingenious...
+71,Tua Tagovailoa,QB,Atl,7,Return of the Mac
+72,Zay Flowers,WR,Bal,4,Return of the Mac
+73,Raheem Mostert,RB,LV,3,Collusion Campers
+74,Caleb Williams,QB,Chi,8,Who needs a qb?
+75,Justin Tucker,K,Bal,1,jamie's Ingenious...
+76,Brandon Aubrey,K,Dal,1,FNU
+77,49ers,DEF,SF,2,Return of the Mac
+78,Dalton Kincaid,TE,Buf,8,Congrats on the w...
+79,Tony Pollard,RB,Ten,1,King
+80,Cowboys,DEF,Dal,2,jamie's Ingenious...
+81,Jake Elliott,K,Phi,1,Collusion Campers
+82,Terry McLaurin,WR,Was,2,Congrats on the w...
+83,D'Andre Swift,RB,Chi,2,Return of the Mac
+84,Jared Goff,QB,Det,8,Congrats on the w...
+85,George Pickens,WR,Dal,3,Return of the Mac
+86,Javonte Williams,RB,Dal,1,FNU
+87,Harrison Butker,K,KC,2,Return of the Mac
+88,James Conner,RB,Ari,7,Team Taruchus
+89,Justin Herbert,QB,LAC,6,King
+90,Daniel Carlson,K,LV,1,Who needs a qb?
+91,Ty Chandler,RB,NO,1,Collusion Campers
+92,Tee Higgins,WR,Cin,5,Who needs a qb?
+93,Rhamondre Stevenson,RB,NE,3,Return of the Mac
+94,Matthew Stafford,QB,LAR,4,FNU
+95,Zamir White,RB,SF,2,Who needs a qb?
+96,Jake Ferguson,TE,Dal,1,FNU
+97,Diontae Johnson,WR,Cle,2,jamie's Ingenious...
+98,Christian Watson,WR,GB,1,King
+99,Jameson Williams,WR,Det,2,FNU
+100,Calvin Ridley,WR,Ten,1,Collusion Campers
+101,Christian Kirk,WR,SF,1,The Big Arch
+102,Gus Edwards,RB,LAC,1,Congrats on the w...
+103,Geno Smith,QB,NYJ,3,MERDY
+104,Chris Godwin Jr.,WR,TB,1,jamie's Ingenious...
+105,Xavier Worthy,WR,KC,2,The Big Arch
+106,Keenan Allen,WR,LAC,1,Team Taruchus
+107,Steelers,DEF,Pit,1,King
+108,Evan Engram,TE,Den,4,King
+109,Jerome Ford,RB,Was,1,Collusion Campers
+110,T.J. Hockenson,TE,Min,1,The Big Arch
+111,Brian Robinson,RB,Atl,1,Congrats on the w...
+112,Jaxon Smith-Njigba,WR,Sea,1,MERDY
+113,Devin Singletary,RB,NYG,2,The Big Arch
+114,Baker Mayfield,QB,TB,2,The Big Arch
+115,DeAndre Hopkins,WR,Bal,1,Team Taruchus
+116,Daniel Jones,QB,Ind,2,The Big Arch
+117,Brock Bowers,TE,LV,1,Who needs a qb?
+118,Joshua Palmer,WR,Buf,2,The Big Arch
+119,Rico Dowdle,RB,Pit,1,The Big Arch
+120,Rome Odunze,WR,Chi,1,Congrats on the w...
+121,Tyjae Spears,RB,Ten,1,MERDY
+122,Ezekiel Elliott,RB,Dal,1,jamie's Ingenious...
+123,Will Levis,QB,Ten,2,The Big Arch
+124,Sam Darnold,QB,Sea,1,Team Taruchus
+125,Bo Nix,QB,Den,1,King
+126,Blake Corum,RB,LAR,1,Who needs a qb?
+127,Hollywood Brown,WR,Phi,1,Collusion Campers
+128,Chase Brown,RB,Cin,1,The Big Arch
+129,Zack Moss,RB,Cin,1,Congrats on the w...
+130,Derek Carr,QB,NO,1,MERDY
+131,Nick Chubb,RB,Hou,1,FNU
+132,Keon Coleman,WR,Buf,1,Team Taruchus
+133,Courtland Sutton,WR,Den,1,King
+134,Brian Thomas Jr.,WR,Jax,1,Who needs a qb?
+135,David Njoku,TE,LAC,1,Collusion Campers
+136,Ladd McConkey,WR,LAC,1,Congrats on the w...
+137,Jayden Reed,WR,GB,1,MERDY
+138,Austin Ekeler,RB,Was,1,FNU
+139,Jonathon Brooks,RB,Car,1,Team Taruchus
+140,Evan McPherson,K,Cin,1,King
+141,Jets,DEF,NYJ,1,Who needs a qb?
+142,Khalil Shakir,WR,Buf,1,Collusion Campers
+143,Bryce Young,QB,Car,1,Congrats on the w...
+144,Jaylen Warren,RB,Pit,1,MERDY
+145,Russell Wilson,QB,NYG,1,FNU
+146,Trey Benson,RB,Ari,1,Team Taruchus
+147,Chuba Hubbard,RB,Car,1,Who needs a qb?
+148,Chiefs,DEF,KC,1,Collusion Campers
+149,Bills,DEF,Buf,1,Congrats on the w...
+150,Curtis Samuel,WR,Buf,1,MERDY
+151,Tyler Lockett,WR,LV,1,FNU
+152,Younghoe Koo,K,NYG,1,Team Taruchus
+153,Tyler Conklin,TE,Det,1,Collusion Campers
+154,Ka'imi Fairbairn,K,Hou,1,Congrats on the w...
+155,J.K. Dobbins,RB,Den,1,MERDY
+156,Jordan Addison,WR,Min,1,FNU
+157,Browns,DEF,Cle,1,Team Taruchus
+158,Tyler Allgeier,RB,Ari,1,Congrats on the w...
+159,Jason Sanders,K,NYJ,1,MERDY
+160,Bears,DEF,Chi,1,MERDY

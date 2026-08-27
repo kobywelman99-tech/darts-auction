@@ -2,6 +2,22 @@
 
 Context for Claude Code working in this repository.
 
+## Modeling principles & guardrails
+
+**The model is complete.** Against a calibrated opponent model (matching real DARTS 2024–2025 spending patterns), it drafts a competitive roster: median rank 2nd of 10, TE shutout 0%, WR shutout 14%, all-slots-filled 84%. Do not "improve" these numbers by adding bid multipliers or position-specific patches. Past patches (WR1 1.45× premium, flat TE must-fill, bench TE scarcity premium) all masked bugs rather than fixing them.
+
+**Bench-scarcity fix (2026-08-26):** `draft_state._my_positional_rate()` now accepts a `need` parameter. The positional scarcity multiplier (which boosts TE/QB bids relative to WR/RB) applies ONLY when `need == "starter"`. Bench and FLEX bids fall back to the base personal $/PAR rate. This fixed TE over-buying (was 4 TEs in some seeds), dropped WR shutout from 36% → 14%, and raised all-slots-filled from ~70% → 84%. No position-specific logic was added; the fix was making an existing rule scope-aware.
+
+**Prefer one general rule over several special cases.** When a fix is position-specific, that's a signal the real bug lives upstream. The per-position $/PAR scarcity rate (in `draft_state._my_positional_rate`) solved TE shutouts completely AND let us delete the WR1 patch. That's the pattern: fix causes, not symptoms.
+
+**The prices are the deliverable; the auto-bidder is just a test harness.** The mock draft's purpose is to prove the model's prices are trustworthy so that on draft night "Bowers is worth $22, the room's letting him go for $12" is a conviction, not a guess. Optimizing mock rank is not the goal.
+
+**Beware overfitting to synthetic opponents.** The real DARTS league front-loads: ~62% of $2,000 spent in the first 30 of 150 nominations, most teams near-broke by pick 60, $1–3 clears common after pick 90. The opponent model is calibrated to this. Don't chase mock rank past "consistently competitive."
+
+**My real edge is a human move the autopilot doesn't make:** nominate a TE early and buy one at the market's depressed price. The tool informs that judgment; it doesn't replace it.
+
+**Opponent scouting:** `data/drafts/scouting_report.md` has per-manager behavioral profiles from 2024–2025 actual drafts: spending shape by nomination range, positional leans confirmed in both years, and TE competition map. The key live finding: Team Taruchus is the only confirmed premium-TE buyer (nominations 15–30); everyone else lets TEs slide to near-minimum.
+
 ## What this project is
 
 An auction valuation model for a specific fantasy football league. The owner is building it partly as a working tool and partly to learn — so **explain reasoning as you go, and prefer clarity over cleverness in the code.** When there's a modeling choice with real tradeoffs, surface it rather than silently picking one.
