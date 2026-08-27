@@ -69,6 +69,21 @@ OPPONENT_NAMES = [
 ]
 ALL_TEAMS = [MY_TEAM] + OPPONENT_NAMES
 
+# Ground-truth manager identities from Yahoo (do not infer from player anchors).
+# Format: manager_name -> (team_name_2024, team_name_2025)
+MANAGER_TEAMS = {
+    "EM":        ("The Big Arch",            "Chasing Mason"),
+    "Jamie":     ("Return of the Mac",       "Field Njigbas"),
+    "Matthew":   ("Collusion Campers",       "Itty Bitty Pitts Committee"),
+    "Justin G":  ("jamie's Ingenious Team",  "Justin's (not Jamie's) Team"),
+    "Benjamin":  ("Congrats on the win",     "My Nix Hurts"),
+    "Jared O":   ("FNU",                     "The Ra-volution"),
+    "Maddy":     ("MERDY",                   "MERDY"),
+    "sean/Josh": ("Team Taruchus",           "Team Taruchus"),
+    "Jonathon":  ("Who needs a qb?",         "Who needs a qb?"),
+    "Koby":      ("King",                    "King"),
+}
+
 
 # ---------------------------------------------------------------------------
 # Auction primitives

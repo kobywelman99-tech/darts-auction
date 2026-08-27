@@ -1,77 +1,102 @@
 # DARTS 2026 — Pre-Draft Manager Scouting Report
 
-*Compiled from 2024 and 2025 actual draft data. 2024 kicker spend excluded from budget percentages. "Confirmed" = behavioral pattern present in both years. "Unconfirmed" = single-year signal, may not repeat. Six managers changed team names between seasons; cross-year identity inferred from recurring player anchors (confirmed cases are labeled).*
+*Compiled from 2024 and 2025 actual draft data. 2024 kicker spend excluded from budget
+percentages. Cross-year manager identity is sourced directly from Yahoo — do NOT
+re-infer it from player anchors (that method produced four errors). The ground-truth
+mapping lives in `src/mock_draft.py → MANAGER_TEAMS`.*
+
+*Spending shape is reported as `% in nominations 1–30 / 31–50 / 51+`.*
 
 ---
 
-## King (you)
+## Koby — King / King
 
-67–68% of budget in the first 30 nominations both years. Your top-3 picks consume roughly half the total budget alone; everything after nomination 35 is mostly near-minimum bids. Confirmed positional lean: WR-heavy roster (6 WR per year), RB anchor pair early, QB timing varies. Self-awareness flag: the gap between your 3–4 star picks and your bench is stark — your WR4/WR5 and RB3 are almost always minimum bids, which creates fragility if any anchor disappoints. You leave very little room to compete in the middle of the auction.
+**67% / 21% / 12%** (2024) · **68% / 14% / 18%** (2025)
 
----
-
-## MERDY
-
-42–52% in nominations 1–30 (below league average), with meaningful spend persisting into nominations 40–60 — one of the more balanced budgets in the room. Confirmed (both years): opens with WR at premium prices, then commits large to a single elite QB in the first 50 nominations. That QB pick is not a bargain — it's a signature overpay that defines their roster. Confirmed (both years): near-zero TE investment, one TE taken late at near-minimum. Not a TE competitor at any price. They are a real threat through nomination 60; don't assume they're out of the market after nomination 30.
+Confirmed front-loader at 67–68% in the first 30 nominations both years. Three elite players consume 50–60% of budget, after which spending drops to near-minimum. Confirmed: RB as the primary anchor pick both years; QB investment grew significantly in 2025. TE spend varies ($5 in 2024, $21 in 2025) — not a confirmed TE skipper. Budget is effectively gone after nomination 40. Self-awareness flag: the gap between the 3-player anchor group and the rest of the roster is stark — depth positions are bought almost exclusively at minimum price.
 
 ---
 
-## Team Taruchus
+## Maddy — MERDY / MERDY
 
-Extreme and escalating front-loader: 60% in nominations 1–30 in 2024, 91% in 2025. In 2025 they placed six meaningful picks in the first 30 nominations. Confirmed (both years): buys a premium TE early — not a bargain, a deliberate investment. Confirmed (both years): pairs two QBs in the first 30 nominations. The direct consequence: after nomination 50, their max bid has typically collapsed to $1–5 and they cannot compete. Actionable: nominating the TE you want in nominations 15–25 forces Taruchus to pay. If Taruchus has already bought a TE, nominating a second TE early costs them money for nothing. The window to extract value from their urgency is nominations 15–35.
+**52% / 38% / 10%** (2024) · **42% / 36% / 22%** (2025)
 
----
-
-## Who needs a qb?
-
-56–72% in nominations 1–30 both years, anchored by a RB or WR at the very first nomination slot. Confirmed (both years): WR concentration (6–7 WRs per roster) while running only 2 meaningful RBs. Confirmed (both years): three QBs at mixed price points — one at premium, two at value — despite the self-deprecating name. Confirmed (both years): near-zero TE spend, one TE picked at near-minimum late. After nomination 65, effectively done spending real money. Misleading name: they absolutely draft QBs; they just don't panic-buy both early.
+Confirmed moderate front-loader with sustained spending through nomination 50 — more balanced than most managers in the room. Confirmed (both years): opens with WR at premium price, then commits large to a single elite QB in nominations 31–50 (not the early window — the mid-auction). That QB pick is not a bargain; it is a signature overpay that defines the roster. Confirmed: near-zero TE investment both years ($9 / $1). Not a TE competitor at any price. Unlike most managers, Maddy still has meaningful money at nomination 40; do not assume they're done.
 
 ---
 
-## The Big Arch (2024) / The Ra-volution (2025) — same manager
+## sean/Josh — Team Taruchus / Team Taruchus
 
-**Confirmed repeat anchor**: Bijan Robinson in nominations 2 and 3 in consecutive years — the most reliable single-player behavioral signal in the dataset. If Robinson is on the board and healthy, this manager bids at premium in the first 5 nominations. After the Robinson anchor they add a second RB and a WR at premium prices in the first 25 nominations. QB spend is low and comes after nomination 35. Near-zero TE spend both years. Confirmed front-loader: 60–75% in picks 1–30. Actionable: Robinson is the fulcrum — force them to pay maximum for him and their budget thins immediately.
+**60% / 31% / 9%** (2024) · **91% / 0% / 9%** (2025)
 
----
-
-## Congrats on the w... (2024) / Chasing Mason (2025) — same manager
-
-**Confirmed repeat anchor**: Josh Allen in the first 15 nominations both years. Extreme and consistent front-loader: 84–87% in nominations 1–30 — the highest rate in the league, confirmed over two years. Also confirmed: a WR pair at premium prices in the first 25 nominations. After nomination 30 they are buying near-minimum picks only. In the most aggressive year, three star players consumed 84% of the budget in the first 5 nominations. Actionable: this manager is dead money after nomination 30. Any player you want in the mid-auction — they cannot compete. If Allen goes to another team early, they often overpay on their fallback WR.
+Confirmed extreme and escalating front-loader: 60% in 2024, rising to 91% in 2025. In 2025 they dropped six meaningful picks in the first 30 nominations, leaving essentially nothing for the remainder. Confirmed (both years): buys a premium TE early — this is deliberate, not incidental (Kelce 2024, Bowers 2025, both above-market prices). Confirmed (both years): pairs two QBs in the first 30 nominations; QB spending is high ($27 / $64). After nomination 50 their max bid has typically collapsed to $1–5. **Actionable**: nominating the TE you want in nominations 15–30 forces them to pay and drains their budget. Once they have their TE, nominating a second early TE costs them money for nothing.
 
 ---
 
-## FNU (2024) / Field Njigbas (2025) — same manager
+## Jonathon — Who needs a qb? / Who needs a qb?
 
-**Confirmed repeat anchor**: CeeDee Lamb in the first 10 nominations both years. Confirmed: opens with a WR+RB combination at premium prices, then adds a significant QB in the first 25 nominations. Front-loader, though less extreme than the top tier: 50–75% in picks 1–30. Unconfirmed (one-year difference): 2024 was more concentrated (75%) than 2025 (50%), suggesting possible shift toward mid-auction flexibility. Near-zero TE spend both years. Actionable: CeeDee is the tell — they are willing to pay a premium for top-tier WR production in the first 10 nominations and will compete hard there.
+**72% / 9% / 19%** (2024) · **56% / 16% / 28%** (2025)
 
----
-
-## Collusion Campers (2024) / Itty Bitty Pitts (2025) — same manager
-
-**Confirmed repeat anchor**: Lamar Jackson in the first 30 nominations both years, at premium price and trending earlier (2024 pick 30, 2025 pick 15). This is confirmed targeting, not coincidence — escalating conviction. Confirmed (both years): pairs two QBs early. Confirmed (both years): WR stack is the secondary strategy. Moderate front-loader: 62–80% in picks 1–30. Actionable: do not try to win a Lamar bidding war — price him up once to drain their budget, then step away. Once Jackson is gone, they pivot cleanly to WRs and lose their maximum aggression.
+Confirmed front-loader (56–72% in first 30 nominations). Confirmed (both years): WR-heavy roster construction (6–7 WRs per year). Confirmed (both years): three QBs at mixed price points — one at premium, two at value. Confirmed: near-zero TE spend in 2024 ($1); slight TE spend in 2025 ($5 / 2 TEs). After nomination 65 effectively done spending real money. Misleading name: they absolutely draft QBs — they just spread the price across the draft rather than panicking in the first nominations.
 
 ---
 
-## jamie's Ingenious... (2024) / My Nix Hurts (2025) — same manager
+## EM — The Big Arch / Chasing Mason
 
-**Confirmed repeat anchor**: Jalen Hurts at nominations 19–20 both years, always at premium price. The 2025 team name is a literal Hurts pun. Confirmed (both years): most spread-out spending curve in the league — highest share in nominations 31–50 (41% in 2024, 42% in 2025). They deliberately avoid the early-nomination frenzy and sustain purchasing power through the mid-auction. Confirmed (both years): three QBs at mixed price points. Unconfirmed (2024 only): early TE investment at meaningful price (Sam LaPorta). Actionable: this is the one manager who can surprise you at nomination 45 — do not assume they are out of money when other managers are. Their budget is still there.
+**60% / 31% / 9%** (2024) · **84% / 3% / 13%** (2025)
 
----
-
-## Return of the Mac (2024) / Justin's (not J...) (2025) — likely same manager (least confident match)
-
-Both show the most evenly spread budgets outside of the "My Nix Hurts" pattern: 36/33/31% in 2024, 46/22/33% in 2025. Both carry 30–33% of budget into nominations 51+, which is the highest late-spend rate in the league. Both run three QBs at varied price points with no single-QB allegiance confirmed. The 2024 anchor was a single elite RB at maximum price in the first 5 nominations; 2025 opened with a WR. Unconfirmed (2025 only): early TE investment at meaningful price mid-auction. Actionable: the most unpredictable sequencer in the room — no obvious player loyalty, no clear positional formula, and still has money when others do not.
+Confirmed heavy front-loader with increasing aggression: 60% in 2024, 84% in 2025. In 2025 the first five nominations consumed 84% of the budget (three players at a combined near-elite price). After nomination 30–35 they are buying at minimum only. Positional strategy is **not consistent year to year**: 2024 opened RB-first; 2025 opened WR×2 + QB. No single player anchor to predict. Confirmed: near-zero TE spend both years ($1 / $2). Actionable: mid-auction is free of competition from this manager — any player you want after nomination 35, they cannot afford.
 
 ---
 
-## Summary: TE Competition Map
+## Jamie — Return of the Mac / Field Njigbas
 
-The managers most likely to compete for the same TE you want, in approximate order of aggressiveness:
+**36% / 33% / 31%** (2024) · **50% / 22% / 28%** (2025)
 
-1. **Team Taruchus** — confirmed premium TE buyer, nominations 15–30 (confirmed 2 years)
-2. **jamie's/My Nix Hurts** — confirmed TE buyer in the 20–45 range (1 year confirmed, 1 unconfirmed)
-3. **Justin's (not J...)** — TE investment observed in 2025 (unconfirmed)
+The most even spending distribution in the league, confirmed across both years. In 2024, the front third, middle third, and back third were within 5 points of each other. In 2025 spending was somewhat more front-loaded but still 28% in nominations 51+, which is the highest late-spend rate among managers who aren't running out of steam. Confirmed: WR-heavy roster (6 WRs both years). Confirmed: very low QB spend ($22 / $14 — cheapest QB roster in the league both years). Confirmed: near-zero TE spend ($9 / $2). **Actionable**: unlike most managers, Jamie still has money in nominations 60–80. Do not assume the auction is a two-manager race at that stage.
 
-Everyone else (MERDY, Who needs a qb?, Field Njigbas, Ra-volution) has shown near-zero TE spend over observed drafts — they are not TE threats.
+---
 
-The lesson from the data: nominating TE early extracts maximum value from Taruchus. If Taruchus has already bought their TE, a second early TE nomination is a free money opportunity — everyone else lets it slide to near-minimum.
+## Matthew — Collusion Campers / Itty Bitty Pitts Committee
+
+**80% / 0% / 20%** (2024) · **62% / 22% / 16%** (2025)
+
+**Confirmed player anchor: Lamar Jackson, both years, at increasing price** (2024: premium, 2025: higher premium). This is the only manager in the dataset with a confirmed two-year repeat on the same player at elevated cost. Confirmed: heavy front-loader (62–80% in nominations 1–30). Confirmed: WR stack is the secondary strategy after Lamar. Confirmed: pairs two QBs in the first 30 nominations; total QB spend is the highest in the league ($80 / $67). Near-zero TE spend both years. **Actionable**: Lamar is the fulcrum. Price him up once to extract maximum from their budget, then step away — they will chase. Once Jackson is gone, Matthew pivots cleanly to WRs and loses maximum aggression.
+
+---
+
+## Justin G — jamie's Ingenious Team / Justin's (not Jamie's) Team
+
+**27% / 41% / 32%** (2024) · **46% / 22% / 33%** (2025)
+
+The most patient spending curve in the room. Confirmed (both years): highest share of budget in nominations 27–50 among all managers (41% in 2024). Confirmed: meaningful late-auction spending (31–33% in nominations 51+, also highest in the league). Confirmed (both years): early TE investment at real price — $22 in 2024, $21 in 2025, both in the nominations 20–45 window. Confirmed: three QBs at varied price points both years. **Actionable**: this manager is the only one who can still surprise you at nomination 45 with a competitive bid. They are also the one most likely to compete for the TE you want in the mid-auction window — not Taruchus (who buys TEs early), but Justin G who buys TEs at nominations 20–45.
+
+---
+
+## Benjamin — Congrats on the Win / My Nix Hurts
+
+**87% / 0% / 13%** (2024) · **48% / 42% / 9%** (2025)
+
+**Total strategy reversal between years**: 2024 was the most extreme front-loader in the league (87% in nominations 1–30, nothing in 31–50); 2025 was the most mid-auction concentrated manager (42% in nominations 31–50, the highest of any manager that year). These are almost mirror-image strategies. The only constants: WR×5 + RB×5 roster construction both years, and heavy QB spend ($67 / $83 — second-highest in 2025). TE spend minimal both years. Given the strategy reversal, **do not assume a pattern holds**. Monitor early spending to determine which approach they're running before committing to a counter-strategy.
+
+---
+
+## Jared O — FNU / The Ra-volution
+
+**75% / 18% / 7%** (2024) · **75% / 10% / 16%** (2025)
+
+**Exactly 75% in the first 30 nominations both years** — the most consistent spending shape in the dataset. Three premium-priced picks in the first 25 nominations is the invariant; which positions those are varies (WR+RB+QB in 2024; RB+WR in 2025). After nomination 35 they spend very little. Near-zero TE spend both years ($1 / $5). QB spend varies significantly year to year ($56 in 2024 via Mahomes; $34 in 2025 with no premium QB). **Actionable**: whoever Jared O bids on in nominations 1–10, they will compete hard. After nomination 35, they're functionally out of the market.
+
+---
+
+## TE Competition Map
+
+The managers most likely to actively compete for a TE you want, in order of likelihood:
+
+1. **sean/Josh (Taruchus)** — confirmed premium TE buyer, nominations 15–30, both years. Will pay above market.
+2. **Justin G** — confirmed TE investment at real price, nominations 20–45, both years. Will not pay maximum but will not let one go for $1.
+3. **Jonathon (Who needs a qb?)** — slight uptick in 2025 (2 TEs at $5 total); still near-minimum. Low threat.
+
+Everyone else (Maddy/MERDY, EM, Jamie, Jared O, Matthew, Benjamin, Koby) has shown near-zero TE spend across observed drafts and is not a meaningful TE threat.
+
+The strategic implication: a TE nominated in nominations 15–25 will draw a real bid from Taruchus and possibly Justin G. A TE nominated after nomination 50 will likely clear near minimum with only occasional resistance from Justin G.
