@@ -1,0 +1,32 @@
+player_name,team,position,role_tier,touch_share,target_share,pass_attempts,rush_attempts,job_security,team_changed,new_play_caller,situation_note,confidence,last_updated
+Josh Allen,BUF,QB,starting_qb,,,35,8,,0,0,Elite dual-threat QB1; rushing pts massive in 2.5x scoring,high,2026-08-28
+Lamar Jackson,BAL,QB,starting_qb,,,35,10,,0,0,Best mobile QB in 2QB leagues; rushing premium enormous in this scoring system,high,2026-08-28
+Jalen Hurts,PHI,QB,starting_qb,,,32,9,,0,0,Elite rusher; 9+ carries/gm; rushing pts rival passing contribution,high,2026-08-28
+Jayden Daniels,WAS,QB,starting_qb,,,33,8,,0,1,Year 2 leap. Mobile + improving passer. McLaurin back. Top mobile QB value.,high,2026-08-28
+Patrick Mahomes,KC,QB,starting_qb,,,36,4,,0,0,Highest pass volume in league; minimal rushing but elite passing efficiency,high,2026-08-28
+Joe Burrow,CIN,QB,starting_qb,,,35,3,,0,0,Elite accuracy and volume; health (hand/wrist history) is the only flag,high,2026-08-28
+C.J. Stroud,HOU,QB,starting_qb,,,35,3,,0,0,Efficient passer in pass-friendly offense; limited rusher,high,2026-08-28
+Brock Purdy,SF,QB,starting_qb,,,33,3,,0,0,Elite efficiency; limited rushing; historically TD-dependent,high,2026-08-28
+Caleb Williams,CHI,QB,starting_qb,,,33,5,,0,1,Year 2 leap expected; improved OL and weapons. Some designed runs.,medium,2026-08-28
+Drake Maye,NE,QB,starting_qb,,,33,5,,0,0,Strong 2025 rookie season; mobile with rushing upside in 2.5x scoring,high,2026-08-28
+Jordan Love,GB,QB,starting_qb,,,34,4,,0,1,Established starter; Kraft/Doubs gone — target distribution reshuffle,high,2026-08-28
+Jared Goff,DET,QB,starting_qb,,,35,3,,0,0,Volume passer; minimal rushing; system-dependent,high,2026-08-28
+Justin Herbert,LAC,QB,starting_qb,,,36,3,,0,0,Highest raw passing volume; limited rushing; consistent floor,high,2026-08-28
+Kyler Murray,ARI,QB,starting_qb,,,34,6,,0,0,Mobile with meaningful rush upside; ARI offense weak but Murray is the show,medium,2026-08-28
+Anthony Richardson,IND,QB,starting_qb,,,30,7,,0,1,Elite rush athlete; accuracy variance is the risk; 2.5x scoring loves his legs,medium,2026-08-28
+Tua Tagovailoa,ATL,QB,starting_qb,,,34,2,,1,1,Moved from MIA to ATL. Purdy-style efficiency; near-zero rushing. Stefanski run-heavy may cap volume.,medium,2026-08-28
+Bo Nix,DEN,QB,starting_qb,,,33,5,,0,1,2025 actual ppg overvalued in placeholder; new OC/WR corps shifts projection,medium,2026-08-28
+Trevor Lawrence,JAX,QB,starting_qb,,,35,3,,0,0,Solid passing foundation; modest rushing; JAX WR corps key uncertainty,medium,2026-08-28
+Baker Mayfield,TB,QB,starting_qb,,,35,3,,0,0,Efficient passer; limited rushing; Evans/Godwin target split matters,medium,2026-08-28
+Sam Darnold,MIN,QB,starting_qb,,,34,4,,0,1,2025 was a career year; regression risk real; Jefferson-dependent,medium,2026-08-28
+Geno Smith,SEA,QB,starting_qb,,,34,3,,0,0,Steady starter; Metcalf / new weapons; limited rushing,medium,2026-08-28
+Will Levis,TEN,QB,starting_qb,,,32,3,,0,1,New OC; Carnell Tate (4th overall WR) is his best weapon; modest rushing,medium,2026-08-28
+Justin Fields,PIT,QB,starting_qb,,,30,8,,0,0,Rushing is the entire fantasy case; passing efficiency still inconsistent,medium,2026-08-28
+Kirk Cousins,LV,QB,starting_qb,,,34,2,,1,1,Moved to LV. Pocket passer; Bowers connection is the ceiling unlock. Rookie Mendoza is the risk to role.,medium,2026-08-28
+Fernando Mendoza,LV,QB,contested_qb,,,,,0,1,1,2026 rookie; competing with Cousins at LV. Bowers connection could be elite if Mendoza wins job. ROOKIE — projection uses QB-median efficiency.,low,2026-08-28
+Aaron Rodgers,NYJ,QB,starting_qb,,,34,2,,0,0,If healthy and starting; age/durability risk. Health report needed before drafting.,low,2026-08-28
+Matthew Stafford,LAR,QB,starting_qb,,,34,2,,0,0,Veteran pocket passer; age 38; health and coaching staff the key variables,low,2026-08-28
+Dak Prescott,DAL,QB,starting_qb,,,35,4,,0,0,Reliable starting QB; DAL offense rebuilt around him. Ankle history is the risk.,medium,2026-08-28
+Deshaun Watson,CLE,QB,contested_qb,,,,,0,0,0,Contested with Shedeur Sanders; Watson health/availability risk; do not draft either without clarity,low,2026-08-28
+Shedeur Sanders,CLE,QB,contested_qb,,,,,0,0,1,2026 rookie; contested with Watson. Elite arm talent but NFL transition risk. ROOKIE — projection uses QB-median efficiency.,low,2026-08-28
+Bryce Young,CAR,QB,contested_qb,,,,,0,0,0,Career on the line in Year 3; new regime; situation too uncertain to trust before clarity,low,2026-08-28

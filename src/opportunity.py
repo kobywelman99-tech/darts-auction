@@ -59,13 +59,16 @@ ROLE_TIERS = {
     "wr3":             {"target_share": 0.12, "job_security": 0.50},
     "slot":            {"target_share": 0.15, "job_security": 0.60},
     "featured_te":     {"target_share": 0.30, "job_security": 0.85},  # McBride/Bowers tier: 9+ tgt/g
+    "te1_plus":        {"target_share": 0.25, "job_security": 0.80},  # elevated TE1: ~7-8 tgt/g
     "te1":             {"target_share": 0.20, "job_security": 0.75},  # solid starter: ~6 tgt/g
     "te2":             {"target_share": 0.14, "job_security": 0.35},  # #2 TE: ~4 tgt/g
 
-    # QB tiers
-    "starting_qb":     {"job_security": 0.85},
-    "contested_qb":    {"job_security": 0.50},
-    "backup_qb":       {"job_security": 0.15},
+    # QB tiers — volume in pass_attempts_pg / rush_attempts_pg (per game defaults).
+    # Scoring: 25 yd/pt pass, 10 yd/pt rush → rushing is 2.5× more efficient per yard.
+    # Mobile QBs should override rush_attempts in the CSV; default is pocket-passer baseline.
+    "starting_qb":  {"pass_attempts_pg": 34, "rush_attempts_pg": 4, "job_security": 0.85},
+    "contested_qb": {"pass_attempts_pg": 20, "rush_attempts_pg": 2, "job_security": 0.50},
+    "backup_qb":    {"pass_attempts_pg":  0, "rush_attempts_pg": 0, "job_security": 0.15},
 }
 
 # Columns the opportunity file must contain.
@@ -155,6 +158,12 @@ def load_opportunity(position: str) -> pd.DataFrame:
         )
         df[field] = df[field].fillna(defaults)
 
+    # QB-specific volume defaults (pass_attempts / rush_attempts columns, if present)
+    for col, tier_key in [("pass_attempts", "pass_attempts_pg"), ("rush_attempts", "rush_attempts_pg")]:
+        if col in df.columns:
+            defaults = df["role_tier"].map(lambda t: ROLE_TIERS.get(t, {}).get(tier_key, np.nan))
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(defaults)
+
     return df
 
 
@@ -175,6 +184,16 @@ def project_volume(df: pd.DataFrame) -> pd.DataFrame:
     # rewards it, because a bust costs you the roster spot too.
     out["risk_adj_carries_pg"] = out["proj_carries_pg"] * out["job_security"].fillna(0.5)
     out["risk_adj_targets_pg"] = out["proj_targets_pg"] * out["job_security"].fillna(0.5)
+
+    # QB volume (populated only when the file has pass_attempts / rush_attempts columns)
+    _nan_col = pd.Series(np.nan, index=out.index)
+    out["proj_pass_att_pg"] = pd.to_numeric(
+        out["pass_attempts"] if "pass_attempts" in out.columns else _nan_col, errors="coerce"
+    ).fillna(0.0)
+    out["proj_rush_att_pg"] = pd.to_numeric(
+        out["rush_attempts"] if "rush_attempts" in out.columns else _nan_col, errors="coerce"
+    ).fillna(0.0)
+
     return out
 
 

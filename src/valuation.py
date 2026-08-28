@@ -259,14 +259,22 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     }).copy()
     opp_proj = opp_proj[opp_proj["proj_ppg"] > 0].reset_index(drop=True)
 
-    # ── 5. Fallback: placeholder for QBs + unfilled opportunity rows ─────────
-    placeholder = placeholder_projections(df)
-    opp_names = set(opp_proj["player_display_name"].str.lower())
-    fallback = placeholder[
-        ~placeholder["player_display_name"].str.lower().isin(opp_names)
-    ]
+    # ── 5. QB projections (separate path — pass attempts not in season parquet) ─
+    qb_proj = _project_qb_opportunity(df)
 
-    result = pd.concat([opp_proj, fallback], ignore_index=True)
+    # ── 6. Fallback: placeholder for unmodeled QBs + unfilled opp rows ────────
+    placeholder = placeholder_projections(df)
+    covered = set(opp_proj["player_display_name"].str.lower())
+    if not qb_proj.empty:
+        covered |= set(qb_proj["player_display_name"].str.lower())
+    fallback = placeholder[~placeholder["player_display_name"].str.lower().isin(covered)]
+
+    parts = [opp_proj]
+    if not qb_proj.empty:
+        parts.append(qb_proj)
+    parts.append(fallback)
+
+    result = pd.concat(parts, ignore_index=True)
     result = result.drop_duplicates(subset="player_display_name", keep="first")
     return result.reset_index(drop=True)
 
@@ -323,6 +331,118 @@ def _compute_consistency() -> pd.DataFrame:
         .reset_index()
     )
     return agg[agg["_n"] >= 8].drop(columns="_n").reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
+# QB efficiency (reads from raw weekly files — season parquet lacks pass attempts)
+# ---------------------------------------------------------------------------
+
+def _compute_qb_efficiency() -> pd.DataFrame:
+    """
+    Per-game QB efficiency from 2023-2025 weekly data.
+
+    Returns pts_per_pass_att and pts_per_rush for each QB with >= 6 qualifying
+    game-weeks.  Medians of these series are the fallback for rookies.
+    """
+    data_dir = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
+    frames = []
+    for yr in [2023, 2024, 2025]:
+        path = os.path.join(data_dir, f"weekly_{yr}.parquet")
+        if not os.path.exists(path):
+            continue
+        wk = pd.read_parquet(path)
+        if "season_type" in wk.columns:
+            wk = wk[wk["season_type"] == "REG"]
+        if "position" in wk.columns:
+            wk = wk[wk["position"] == "QB"]
+        frames.append(wk)
+
+    if not frames:
+        return pd.DataFrame(columns=["player_display_name", "pts_per_pass_att", "pts_per_rush"])
+
+    df = pd.concat(frames, ignore_index=True)
+    df = df[df["attempts"] > 10].copy()   # only games with meaningful pass volume
+
+    # Passing pts per attempt using DARTS scoring (25 yd/pt, 4 TD, -2 INT)
+    df["_pass_pts"] = (
+        df["passing_yards"] / 25
+        + df["passing_tds"] * 4
+        - df["passing_interceptions"] * 2
+    )
+    df["pts_per_pass_att"] = df["_pass_pts"] / df["attempts"]
+
+    # Rush pts per carry (rushing_yards/10 + 6×TD − 2×fumble)
+    df["_rush_pts"] = (
+        df["rushing_yards"] / 10
+        + df["rushing_tds"] * 6
+        - df["rushing_fumbles_lost"].fillna(0) * 2
+    )
+    df["pts_per_rush"] = np.where(df["carries"] > 1, df["_rush_pts"] / df["carries"], np.nan)
+
+    agg = (
+        df.groupby("player_display_name")
+        .agg(
+            pts_per_pass_att=("pts_per_pass_att", "mean"),
+            pts_per_rush=("pts_per_rush", lambda x: float(x.dropna().mean()) if x.notna().any() else np.nan),
+            _n=("attempts", "count"),
+        )
+        .reset_index()
+    )
+    return agg[agg["_n"] >= 6].drop(columns="_n").reset_index(drop=True)
+
+
+def _project_qb_opportunity(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Project QB ppg from qb_2026.csv using QB-specific efficiency.
+
+    Returns same schema as opp_proj (player_display_name, position, team, age,
+    proj_ppg, role_tier).  Returns empty DataFrame if no QB file exists.
+    """
+    from opportunity import load_opportunity, project_volume
+
+    try:
+        qb_opp = load_opportunity("QB")
+    except FileNotFoundError:
+        return pd.DataFrame()
+
+    qb_vol = project_volume(qb_opp)
+    qb_filled = qb_vol[qb_vol["role_tier"].notna() & (qb_vol["role_tier"].astype(str) != "")].copy()
+    if qb_filled.empty:
+        return pd.DataFrame()
+
+    qb_eff = _compute_qb_efficiency()
+    if qb_eff.empty:
+        return pd.DataFrame()
+
+    med_ppa = float(qb_eff["pts_per_pass_att"].median())
+    med_ppr_series = qb_eff["pts_per_rush"].dropna()
+    med_ppr = float(med_ppr_series.median()) if not med_ppr_series.empty else 0.5
+
+    merged = qb_filled.merge(
+        qb_eff, left_on="player_name", right_on="player_display_name", how="left"
+    )
+    merged["proj_ppg"] = (
+        merged["proj_pass_att_pg"].fillna(0) * merged["pts_per_pass_att"].fillna(med_ppa)
+        + merged["proj_rush_att_pg"].fillna(0) * merged["pts_per_rush"].fillna(med_ppr)
+    )
+
+    # Pull age and team from latest season data (NaN for rookies with no history)
+    latest_qb = (
+        df[(df.season == 2025) & (df.position == "QB")]
+        .groupby("player_display_name")[["age"]]
+        .last()
+        .reset_index()
+        .rename(columns={"age": "_age_hist"})
+    )
+    merged = merged.merge(latest_qb, left_on="player_name", right_on="player_display_name", how="left")
+
+    result = merged[merged["proj_ppg"] > 0].copy()
+    return result[[
+        "player_name", "position", "team", "proj_ppg", "role_tier", "_age_hist",
+    ]].rename(columns={
+        "player_name": "player_display_name",
+        "_age_hist": "age",
+    }).reset_index(drop=True)
 
 
 # ---------------------------------------------------------------------------
