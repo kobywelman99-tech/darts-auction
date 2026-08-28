@@ -373,8 +373,12 @@ class DraftState:
         feasibility_max = me.max_bid
 
         # 2. Market value ceiling (old value_max — league rate)
-        if info is not None and not np.isnan(mult):
-            mkt_value_max = max(MIN_BID, round(1 + (info["raw_price"] - 1) * mult))
+        # Guard NaN raw_price: players outside the priced quota (par=0) have no model
+        # value — treat them as $1 so the UI doesn't crash and they can still be logged.
+        raw_price = info["raw_price"] if info is not None else float("nan")
+        has_model = info is not None and pd.notna(raw_price) and not np.isnan(mult)
+        if has_model:
+            mkt_value_max = max(MIN_BID, round(1 + (raw_price - 1) * mult))
         elif info is not None:
             mkt_value_max = info["price"]
         else:

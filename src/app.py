@@ -29,9 +29,11 @@ from league_config import (  # noqa: E402
 )
 from valuation import compute_values  # noqa: E402
 from draft_state import DraftState  # noqa: E402
+from mock_draft import MANAGER_TEAMS  # noqa: E402  ground-truth Yahoo mapping
 
 # ---------------------------------------------------------------------------
-# League config — ground-truth 2025 team names from Yahoo
+# League config — team names are internal DraftState keys (backwards-compat
+# with any saved JSON state); manager names are display-only.
 # ---------------------------------------------------------------------------
 MY_TEAM = "King"
 OPPONENT_NAMES = [
@@ -46,6 +48,18 @@ OPPONENT_NAMES = [
     "Who needs a qb?",
 ]
 ALL_TEAMS = [MY_TEAM] + OPPONENT_NAMES
+
+# Manager display names (ground-truth from Yahoo, same order as ALL_TEAMS)
+TEAM_TO_MANAGER: dict[str, str] = {}
+MANAGER_TO_TEAM: dict[str, str] = {}
+for _mgr, (_t24, _t25) in MANAGER_TEAMS.items():
+    TEAM_TO_MANAGER[_t24] = _mgr
+    TEAM_TO_MANAGER[_t25] = _mgr
+    MANAGER_TO_TEAM[_mgr] = _t25
+
+# Ordered manager list aligned with ALL_TEAMS
+ALL_MANAGERS = [TEAM_TO_MANAGER.get(t, t) for t in ALL_TEAMS]
+MY_MANAGER = TEAM_TO_MANAGER.get(MY_TEAM, MY_TEAM)
 
 DATA_DIR = os.path.join(APP_DIR, "..", "data")
 STATE_FILE = os.path.join(DATA_DIR, "drafts", "live_draft_2026.json")
@@ -66,10 +80,8 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* Remove top padding */
     .block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1400px; }
 
-    /* The big number */
     .max-bid-num {
         font-size: 140px;
         font-weight: 800;
@@ -127,7 +139,8 @@ st.markdown("""
         color: #333;
         line-height: 1.45;
     }
-    .context-line.risk { color: #a04040; }
+    .context-line.risk   { color: #a04040; }
+    .context-line.rookie { color: #7a4a00; font-weight: 600; }
     .context-line.market { color: #666; font-style: italic; }
 
     .roster-row {
@@ -149,13 +162,24 @@ st.markdown("""
     .alert-amber { background: #fff8e6; padding: 0.15em 0.5em; border-radius: 3px; color: #8a6a1e; }
     .alert-green { color: #2a7a2a; }
 
-    /* Make headers quieter */
     h2 { font-size: 20px !important; color: #555 !important; font-weight: 600 !important;
          margin-top: 0.6em !important; }
     h3 { font-size: 16px !important; color: #777 !important; font-weight: 600 !important; }
 
-    /* Tighter input styling */
     div[data-testid="stNumberInput"] input { font-size: 20px; font-weight: 600; }
+
+    .tier-block { margin-bottom: 0.5em; }
+    .tier-header { font-size: 12px; color: #999; text-transform: uppercase;
+                   letter-spacing: 1px; margin-bottom: 0.2em; }
+    .tier-row { font-size: 14px; color: #333; padding: 0.15em 0; border-bottom: 1px solid #f5f5f5; }
+    .tier-cliff { border-top: 2px solid #e0a000; margin-top: 0.3em; padding-top: 0.3em;
+                  font-size: 11px; color: #a07000; letter-spacing: 1px; }
+
+    .mgr-row { display: flex; justify-content: space-between; padding: 0.4em 0;
+               border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .pick-slot { padding: 0.3em 0; font-size: 14px; border-bottom: 1px solid #f5f5f5; }
+    .slot-label { color: #999; font-size: 12px; min-width: 52px; display: inline-block; }
+    .slot-empty { color: #ccc; font-style: italic; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -179,7 +203,6 @@ def load_last_year_prices():
 
 @st.cache_data
 def load_opportunity_notes():
-    """situation_note keyed by name — role_tier is already on the board."""
     notes: dict[str, str] = {}
     for pos in ("rb", "wr", "te"):
         fpath = os.path.join(OPP_DIR, f"{pos}_2026.csv")
@@ -194,7 +217,7 @@ def load_opportunity_notes():
 
 @st.cache_data
 def load_positional_ranks():
-    """Last-season (2025) positional rank + ppg + games."""
+    """2025 positional rank + ppg + games, keyed by name lower."""
     df = pd.read_parquet(HISTORY_FILE)
     df = df[df["season"] == 2025].copy()
     ranks: dict[str, dict] = {}
@@ -209,6 +232,17 @@ def load_positional_ranks():
                 "games": int(row["games"]) if pd.notna(row["games"]) else 0,
             }
     return ranks
+
+@st.cache_data
+def load_injury_flags() -> set[str]:
+    """Players who played < 10 games in 2+ of last 4 seasons (injury-prone proxy)."""
+    df = pd.read_parquet(HISTORY_FILE)
+    recent = df[df["season"].isin([2022, 2023, 2024, 2025])].copy()
+    missed = (
+        recent.groupby("player_display_name")["games"]
+        .apply(lambda g: int((g < 10).sum()))
+    )
+    return {name.lower() for name in missed[missed >= 2].index}
 
 @st.cache_data
 def load_scouting_md():
@@ -240,9 +274,15 @@ def _rebuild_from_picks(picks: list[dict]) -> DraftState:
     board = load_board()
     ds = DraftState(my_team=MY_TEAM, all_teams=ALL_TEAMS, board=board)
     for p in picks:
+        team = p["fantasy_team"]
+        # Backwards compat: if stored as team name, use it; if manager name, map back
+        if team not in ALL_TEAMS and team in MANAGER_TO_TEAM:
+            team = MANAGER_TO_TEAM[team]
+        if team not in ALL_TEAMS:
+            team = MY_TEAM  # fallback
         ds.add_pick(
             p["player"], int(p["salary"]),
-            p["fantasy_team"], position=p.get("position"),
+            team, position=p.get("position"),
         )
     return ds
 
@@ -282,10 +322,11 @@ if "selected_player" not in st.session_state:
 if "current_bid" not in st.session_state:
     st.session_state.current_bid = 0
 
-board = load_board()
-last_year = load_last_year_prices()
-opp_notes = load_opportunity_notes()
-pos_ranks = load_positional_ranks()
+board       = load_board()
+last_year   = load_last_year_prices()
+opp_notes   = load_opportunity_notes()
+pos_ranks   = load_positional_ranks()
+injury_flags = load_injury_flags()
 
 draft: DraftState = st.session_state.draft
 me = draft.my_state
@@ -294,41 +335,99 @@ me = draft.my_state
 # Player context card
 # ---------------------------------------------------------------------------
 def build_context(row) -> list[tuple[str, str]]:
-    """Returns [(class, text), ...] — 3–4 lines about the player."""
+    """Returns [(css_class, text), ...] — 3–5 lines about the player."""
     lines: list[tuple[str, str]] = []
     key = str(row["player_display_name"]).strip().lower()
 
-    # Line 1: last season rank + ppg + gp
-    if key in pos_ranks:
+    # Rookie detection: no 2025 stat line in history
+    is_rookie = key not in pos_ranks
+
+    # Line 1: 2025 rank / ppg / games  OR  rookie flag
+    if not is_rookie:
         r = pos_ranks[key]
         lines.append(("", f"{r['position']}{r['rank']} in 2025 · {r['ppg']:.1f} ppg · {r['games']} games"))
     else:
-        lines.append(("", "No 2025 stat line (rookie or DNP)"))
+        lines.append(("rookie", "ROOKIE — projection uses positional-median efficiency; treat as soft"))
 
-    # Line 2: role + projection
+    # Injury flag: < 10 games in 2+ of last 4 seasons
+    if key in injury_flags and not is_rookie:
+        lines.append(("risk", "Injury history: missed 10+ games in 2+ of last 4 seasons"))
+
+    # Line 2: role + projection (with source label when it's just 2025 actual)
     role = row.get("role_tier")
     proj = row.get("proj_ppg")
-    parts = []
-    if pd.notna(role) and str(role).strip():
-        parts.append(str(role).replace("_", " ").strip())
-    if pd.notna(proj) and proj:
-        parts.append(f"{float(proj):.1f} projected ppg")
-    if parts:
-        lines.append(("", " · ".join(parts)))
+    has_opp_model = pd.notna(role) and str(role).strip()
 
-    # Line 3: situation note (risk / context)
+    if has_opp_model:
+        parts = [str(role).replace("_", " ").strip()]
+        if pd.notna(proj) and proj:
+            parts.append(f"{float(proj):.1f} projected ppg")
+        lines.append(("", " · ".join(parts)))
+    elif pd.notna(proj) and proj and not is_rookie:
+        # proj_ppg == 2025 actual; make the source explicit
+        lines.append(("", f"{float(proj):.1f} ppg (2025 actual — no opportunity model)"))
+
+    # Line 3: situation note
     if key in opp_notes:
         note = opp_notes[key]
         if len(note) > 160:
             note = note[:157] + "…"
         lines.append(("risk", note))
 
-    # Line 4: last-year market price
+    # Line 4: last-year auction price
     if key in last_year:
         ly = last_year[key]
-        lines.append(("market", f"2025 auction: ${ly['salary']} → {ly['winner']}"))
+        winner_mgr = TEAM_TO_MANAGER.get(ly["winner"], ly["winner"])
+        lines.append(("market", f"2025 auction: ${ly['salary']} → {winner_mgr}"))
 
     return lines
+
+# ---------------------------------------------------------------------------
+# Slot assignment for roster display
+# ---------------------------------------------------------------------------
+SLOT_ORDER = [
+    ("QB", 2), ("WR", 3), ("RB", 2), ("TE", 1), ("FLEX", 1), ("DEF", 1), ("BN", 5),
+]
+
+def assign_slots(picks):
+    """Return list of (slot_label, pick_or_None)."""
+    from collections import defaultdict
+    by_pos: dict[str, list] = defaultdict(list)
+    for p in picks:
+        by_pos[p.position or "BN"].append(p)
+
+    result = []
+    used: dict[str, int] = {}
+
+    for slot, count in SLOT_ORDER:
+        if slot == "FLEX":
+            flex_pick = None
+            for fpos in ("RB", "WR", "TE"):
+                starter_cap = dict(SLOT_ORDER).get(fpos, 0)
+                used_so_far = used.get(fpos, 0)
+                if used_so_far >= starter_cap and len(by_pos[fpos]) > used_so_far:
+                    flex_pick = by_pos[fpos][used_so_far]
+                    used[fpos] = used_so_far + 1
+                    break
+            result.append(("FLEX", flex_pick))
+        elif slot == "BN":
+            # Collect everything not yet used
+            bench = []
+            for pos_key, pool in by_pos.items():
+                start = used.get(pos_key, 0)
+                bench.extend(pool[start:])
+            for i in range(count):
+                result.append((f"BN {i+1}", bench[i] if i < len(bench) else None))
+        else:
+            pool = by_pos.get(slot, [])
+            cap = count
+            filled = used.get(slot, 0)
+            for i in range(cap):
+                idx = filled + i
+                result.append((f"{slot} {i+1}", pool[idx] if idx < len(pool) else None))
+            used[slot] = filled + cap
+
+    return result
 
 # ---------------------------------------------------------------------------
 # TOP BAR — always visible
@@ -349,7 +448,6 @@ with top_b:
 with top_c:
     st.markdown(f"<div class='status-line'>MAX BID</div><h3 style='margin-top:0'>${max_bid}</h3>", unsafe_allow_html=True)
 with top_d:
-    ratio = pace["ratio"] if pace["ratio"] != float("inf") else 0
     hoard_flag = " ⚠" if pace["hoarding"] else ""
     st.markdown(
         f"<div class='status-line'>$/SLOT</div>"
@@ -371,7 +469,9 @@ st.markdown("<hr style='margin:0.4em 0 1.2em 0; border:none; border-top:1px soli
 # ---------------------------------------------------------------------------
 # TABS
 # ---------------------------------------------------------------------------
-tab_live, tab_board, tab_scout = st.tabs(["● Live draft", "Full board", "Scouting"])
+tab_live, tab_board, tab_rosters, tab_scout = st.tabs(
+    ["● Live draft", "Full board", "Rosters", "Scouting"]
+)
 
 # ============================================================================
 # LIVE TAB
@@ -380,7 +480,6 @@ with tab_live:
     left, right = st.columns([2.6, 1])
 
     with left:
-        # Available players (undrafted, on board)
         drafted_lower = {p.player.lower().strip() for p in draft.all_picks}
         undrafted = board[
             ~board["player_display_name"].str.lower().str.strip().isin(drafted_lower)
@@ -388,7 +487,6 @@ with tab_live:
         undrafted = undrafted.sort_values("price", ascending=False)
         player_options = undrafted["player_display_name"].tolist()
 
-        # Type-ahead search
         selected = st.selectbox(
             "🔍 Player up for bid",
             options=[""] + player_options,
@@ -404,7 +502,6 @@ with tab_live:
             bidders = draft.live_bidders(c["position"])
             my_need = me.positional_need(c["position"])
 
-            # Player headline
             team = row.get("team", "")
             st.markdown(
                 f"<div class='player-headline'>{selected}</div>"
@@ -412,14 +509,19 @@ with tab_live:
                 unsafe_allow_html=True,
             )
 
-            # THE MAX BID — big number
-            rec = int(c["recommended"])
+            # No-model-value note for below-quota players
+            no_model = pd.isna(row.get("raw_price")) or row.get("par", 0) == 0
+
+            rec = max(1, int(c["recommended"]))
             current_bid = st.session_state.current_bid
             css_class = "max-bid-num"
             label = "MY MAX BID"
             if my_need == "none":
                 css_class += " done"
                 label = "POSITION FULL"
+            elif no_model:
+                css_class += " done"
+                label = "BELOW REPLACEMENT — log at $1"
             elif current_bid and current_bid > rec:
                 css_class += " over"
                 label = "BID EXCEEDS MY MAX"
@@ -427,20 +529,18 @@ with tab_live:
             st.markdown(f"<div class='max-bid-label'>{label}</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='{css_class}'>${rec}</div>", unsafe_allow_html=True)
 
-            # Supporting line
-            model_px = c.get("model_price") or 0
-            binding = "opp-cost binds" if c["binding"] == "opp_cost" else "feasibility binds"
-            support = f"Model <b>${model_px}</b> · {binding} · MY rate ${c['my_rate']:.2f}/PAR"
-            st.markdown(f"<div class='support-line'>{support}</div>", unsafe_allow_html=True)
+            if not no_model:
+                model_px = c.get("model_price") or 0
+                binding = "opp-cost binds" if c["binding"] == "opp_cost" else "feasibility binds"
+                support = f"Model <b>${model_px}</b> · {binding} · MY rate ${c['my_rate']:.2f}/PAR"
+                st.markdown(f"<div class='support-line'>{support}</div>", unsafe_allow_html=True)
 
-            # Live bidder line
             bidder_line = (
                 f"<b>{bidders['competitive_count']}</b> teams competitive · "
                 f"highest max <b>${bidders['max_competing_bid']}</b>"
             )
             st.markdown(f"<div class='support-line'>{bidder_line}</div>", unsafe_allow_html=True)
 
-            # Live current-bid input (small, unobtrusive)
             with st.container():
                 bid_col1, bid_col2 = st.columns([1, 3])
                 with bid_col1:
@@ -451,7 +551,6 @@ with tab_live:
                         step=1, label_visibility="visible",
                     )
 
-            # Player context card
             ctx = build_context(row)
             if ctx:
                 ctx_html = "<div class='context-card'>"
@@ -468,7 +567,7 @@ with tab_live:
                 unsafe_allow_html=True,
             )
 
-        # ── Pick entry (bottom of left column) ───────────────────────────────
+        # ── Pick entry ────────────────────────────────────────────────────────
         st.markdown("<hr style='margin:1.5em 0 0.8em 0'>", unsafe_allow_html=True)
         st.markdown("### Record pick")
 
@@ -482,28 +581,44 @@ with tab_live:
                     label_visibility="collapsed",
                     placeholder="Player…",
                 )
+                # Free-text override for off-board players (rookies, DSTs not yet in board, etc.)
+                manual_name = st.text_input(
+                    "Or enter manually (off-board player):",
+                    value="",
+                    placeholder="e.g. Fernando Mendoza QB",
+                )
             with f2:
                 pick_price = st.number_input(
                     "Price", min_value=1, max_value=BUDGET_PER_TEAM,
                     value=1, step=1, label_visibility="collapsed",
                 )
             with f3:
-                pick_team = st.selectbox(
-                    "Team", options=ALL_TEAMS,
-                    index=ALL_TEAMS.index(MY_TEAM),
+                # Show manager names; map back to team name for DraftState
+                pick_manager = st.selectbox(
+                    "Manager", options=ALL_MANAGERS,
+                    index=ALL_MANAGERS.index(MY_MANAGER),
                     label_visibility="collapsed",
                 )
             with f4:
                 submitted = st.form_submit_button("SAVE", width="stretch")
 
-            if submitted and pick_player:
-                r = undrafted[undrafted["player_display_name"] == pick_player]
-                pos = r.iloc[0]["position"] if not r.empty else None
-                add_pick(pick_player, int(pick_price), pick_team, pos)
-                st.session_state.current_bid = 0
-                st.rerun()
+            if submitted:
+                final_player = manual_name.strip() if manual_name.strip() else pick_player
+                if final_player:
+                    pick_team = MANAGER_TO_TEAM.get(pick_manager, MY_TEAM)
+                    r = undrafted[undrafted["player_display_name"] == final_player]
+                    if not r.empty:
+                        pos = r.iloc[0]["position"]
+                    else:
+                        # Off-board: try to parse position from name (e.g. "Mendoza QB")
+                        parts = final_player.rsplit(None, 1)
+                        pos_guess = parts[-1].upper() if len(parts) > 1 and parts[-1].upper() in ("QB","RB","WR","TE","DEF") else None
+                        pos = pos_guess
+                        final_player = parts[0] if pos_guess else final_player
+                    add_pick(final_player, int(pick_price), pick_team, pos)
+                    st.session_state.current_bid = 0
+                    st.rerun()
 
-        # Undo + last pick display
         under_a, under_b = st.columns([1, 4])
         with under_a:
             if st.button("↶ UNDO", width="stretch"):
@@ -513,19 +628,19 @@ with tab_live:
         with under_b:
             if st.session_state.picks_history:
                 last = st.session_state.picks_history[-1]
+                mgr_display = TEAM_TO_MANAGER.get(last["fantasy_team"], last["fantasy_team"])
                 st.markdown(
                     f"<div class='status-line' style='padding-top:0.6em'>"
-                    f"Last: <b>{last['player']}</b> → {last['fantasy_team']} at ${last['salary']}"
+                    f"Last: <b>{last['player']}</b> → {mgr_display} at ${last['salary']}"
                     f"</div>", unsafe_allow_html=True,
                 )
 
-    # ── RIGHT PANEL: roster + scarcity + pacing ─────────────────────────────
+    # ── RIGHT PANEL ──────────────────────────────────────────────────────────
     with right:
         st.markdown("### My roster")
         pc = me.position_counts
         my_starter_slots = ("QB", "RB", "WR", "TE", "FLEX", "DEF")
 
-        # Compute FLEX filled status
         skill_ct  = me.skill_drafted
         flex_max  = STARTERS["FLEX"]
         flex_filled = max(0, min(flex_max, skill_ct - (STARTERS["RB"] + STARTERS["WR"] + STARTERS["TE"])))
@@ -543,7 +658,6 @@ with tab_live:
                 f"<div class='roster-row'><span class='{cls}'>{slot}</span>"
                 f"<span class='{cls}'>{cur}/{cap}</span></div>"
             )
-        # Bench summary
         drafted = len(me.picks)
         starter_slots_total = sum(STARTERS.values())
         bench_used = max(0, drafted - starter_slots_total)
@@ -554,23 +668,21 @@ with tab_live:
         )
         st.markdown(roster_html, unsafe_allow_html=True)
 
-        # Pacing single line
         st.markdown("<div style='height:0.6em'></div>", unsafe_allow_html=True)
         avg_needed = pace["avg_needed"]
         avg_target = pace["avg_target_price"]
         if pace["tripwire"]:
-            pace_msg = f"<span class='alert-red'>⚠ HOARDING — targets tightening</span>"
+            pace_msg = "<span class='alert-red'>⚠ HOARDING — targets tightening</span>"
         elif pace["underspending"]:
-            pace_msg = f"<span class='alert-amber'>← UNDERSPENDING — bid up</span>"
+            pace_msg = "<span class='alert-amber'>← UNDERSPENDING — bid up</span>"
         else:
-            pace_msg = f"<span class='alert-green'>on pace</span>"
+            pace_msg = "<span class='alert-green'>on pace</span>"
         st.markdown(
             f"<div class='status-line'>Avg $/slot needed: <b>${avg_needed:.1f}</b> · "
             f"target avg <b>${avg_target:.1f}</b><br>{pace_msg}</div>",
             unsafe_allow_html=True,
         )
 
-        # Scarcity alerts — only for positions I still need
         st.markdown("<div style='height:0.8em'></div>", unsafe_allow_html=True)
         st.markdown("### Scarcity")
         open_positions = [p for p in ("QB", "RB", "WR", "TE") if me.starter_need(p)]
@@ -596,13 +708,50 @@ with tab_live:
             )
 
 # ============================================================================
-# BOARD TAB — full player table
+# BOARD TAB — full player table with tier view
 # ============================================================================
 with tab_board:
-    drafted_lower = {p.player.lower().strip() for p in draft.all_picks}
+    drafted_lower_b = {p.player.lower().strip() for p in draft.all_picks}
     b = board.copy()
-    b["drafted"] = b["player_display_name"].str.lower().str.strip().isin(drafted_lower)
+    b["drafted"] = b["player_display_name"].str.lower().str.strip().isin(drafted_lower_b)
 
+    # ── Tier view ────────────────────────────────────────────────────────────
+    with st.expander("Value tiers — where the cliffs are", expanded=True):
+        tier_cols = st.columns(4)
+        for col_idx, pos in enumerate(("QB", "RB", "WR", "TE")):
+            pos_pool = (
+                b[(b["position"] == pos) & (b["price"] > 1) & ~b["drafted"]]
+                .sort_values("price", ascending=False)
+                .head(16)
+            )
+            with tier_cols[col_idx]:
+                st.markdown(f"**{pos}**")
+                if pos_pool.empty:
+                    st.markdown("<span style='color:#aaa'>all drafted</span>", unsafe_allow_html=True)
+                    continue
+
+                prices = pos_pool["price"].tolist()
+                names  = pos_pool["player_display_name"].tolist()
+
+                html = ""
+                prev_price = None
+                for i, (name, price) in enumerate(zip(names, prices)):
+                    cliff = (
+                        i > 0
+                        and prev_price is not None
+                        and prev_price > 5
+                        and (prev_price - price) >= 5
+                    )
+                    if cliff:
+                        html += f"<div class='tier-cliff'>▼ cliff</div>"
+                    short = name if len(name) <= 18 else name[:16] + "…"
+                    html += f"<div class='tier-row'>${price:>3}  {short}</div>"
+                    prev_price = price
+                st.markdown(html, unsafe_allow_html=True)
+
+    st.markdown("<div style='height:0.5em'></div>", unsafe_allow_html=True)
+
+    # ── Full table ───────────────────────────────────────────────────────────
     f1, f2, f3 = st.columns([1, 1, 4])
     with f1:
         pos_filter = st.selectbox(
@@ -626,7 +775,95 @@ with tab_board:
         "proj_ppg": "ppg", "par": "PAR", "price": "$", "role_tier": "Role",
         "drafted": "✓",
     })
-    st.dataframe(table, width="stretch", hide_index=True, height=650)
+    st.dataframe(table, width="stretch", hide_index=True, height=600)
+
+# ============================================================================
+# ROSTERS TAB
+# ============================================================================
+with tab_rosters:
+    # ── Summary table: all managers ──────────────────────────────────────────
+    st.markdown("### All managers")
+
+    mgr_rows = []
+    for team_name, team_state in draft.teams.items():
+        mgr = TEAM_TO_MANAGER.get(team_name, team_name)
+        pc = team_state.position_counts
+        mgr_rows.append({
+            "Manager": mgr,
+            "Spent": f"${team_state.money_spent}",
+            "Left": f"${team_state.money_remaining}",
+            "Max bid": f"${team_state.max_bid}",
+            "Slots": f"{team_state.slots_filled}/{ROSTER_SIZE}",
+            "QB": pc.get("QB", 0),
+            "RB": pc.get("RB", 0),
+            "WR": pc.get("WR", 0),
+            "TE": pc.get("TE", 0),
+            "DEF": pc.get("DEF", 0),
+        })
+
+    mgr_df = pd.DataFrame(mgr_rows)
+    st.dataframe(mgr_df, width="stretch", hide_index=True)
+
+    # ── Per-manager detail ───────────────────────────────────────────────────
+    st.markdown("<div style='height:1em'></div>", unsafe_allow_html=True)
+    st.markdown("### Roster detail")
+
+    sel_mgr = st.selectbox(
+        "Select manager",
+        options=ALL_MANAGERS,
+        index=ALL_MANAGERS.index(MY_MANAGER),
+        key="roster_mgr_select",
+    )
+
+    sel_team = MANAGER_TO_TEAM.get(sel_mgr, MY_TEAM)
+    ts = draft.teams.get(sel_team)
+
+    if ts is None:
+        st.warning(f"No state found for {sel_mgr}")
+    else:
+        col_a, col_b = st.columns([2, 1])
+        with col_a:
+            slots = assign_slots(ts.picks)
+            slot_html = ""
+            for label, pick in slots:
+                if pick is not None:
+                    slot_html += (
+                        f"<div class='pick-slot'>"
+                        f"<span class='slot-label'>{label}</span>"
+                        f"{pick.player} "
+                        f"<span style='color:#999'>${pick.salary} · {pick.position}</span>"
+                        f"</div>"
+                    )
+                else:
+                    slot_html += (
+                        f"<div class='pick-slot'>"
+                        f"<span class='slot-label'>{label}</span>"
+                        f"<span class='slot-empty'>empty</span>"
+                        f"</div>"
+                    )
+            st.markdown(slot_html, unsafe_allow_html=True)
+
+        with col_b:
+            st.markdown(
+                f"<div class='status-line'>SPENT</div>"
+                f"<h3 style='margin-top:0'>${ts.money_spent}</h3>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div class='status-line'>REMAINING</div>"
+                f"<h3 style='margin-top:0'>${ts.money_remaining}</h3>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div class='status-line'>MAX BID</div>"
+                f"<h3 style='margin-top:0'>${ts.max_bid}</h3>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div class='status-line'>$/SLOT</div>"
+                f"<h3 style='margin-top:0'>${ts.dollars_per_slot:.1f}</h3>",
+                unsafe_allow_html=True,
+            )
 
 # ============================================================================
 # SCOUTING TAB

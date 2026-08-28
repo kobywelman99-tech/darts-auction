@@ -435,19 +435,29 @@ def compute_values(
     off_top["price"] = _largest_remainder_round(off_top["raw_price"], off_target)
     off_top["is_drafted"] = True
 
-    # ── 6. DEF: 10 reserved slots at $1 each ────────────────────────────────
+    # ── 6. DEF: all 32 NFL team DSTs, $1 each ───────────────────────────────
+    # 10 reserved slots in the draft pool (is_drafted=True); all 32 are loggable
+    # in the live draft assistant.  DST scoring is not modeled, so no PAR-based
+    # price is possible — $1 for every team.
+    NFL_TEAMS = sorted([
+        "ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE",
+        "DAL", "DEN", "DET", "GB",  "HOU", "IND", "JAX", "KC",
+        "LAC", "LAR", "LV",  "MIA", "MIN", "NE",  "NO",  "NYG",
+        "NYJ", "PHI", "PIT", "SEA", "SF",  "TB",  "TEN", "WAS",
+    ])
+    n_dst = len(NFL_TEAMS)
     def_rows = pd.DataFrame({
-        "player_display_name": ["DEF"] * DEF_SLOTS,
-        "position":            ["DEF"] * DEF_SLOTS,
-        "team":                [""]   * DEF_SLOTS,
-        "age":                 [np.nan] * DEF_SLOTS,
-        "proj_ppg":            [np.nan] * DEF_SLOTS,
-        "replacement_ppg":     [np.nan] * DEF_SLOTS,
-        "par":                 [0.0]  * DEF_SLOTS,
-        "raw_price":           [float(min_bid)] * DEF_SLOTS,
-        "price":               [min_bid] * DEF_SLOTS,
-        "is_drafted":          [True] * DEF_SLOTS,
-        "role_tier":           [np.nan] * DEF_SLOTS,
+        "player_display_name": [f"{t} DST" for t in NFL_TEAMS],
+        "position":            ["DEF"] * n_dst,
+        "team":                NFL_TEAMS,
+        "age":                 [np.nan] * n_dst,
+        "proj_ppg":            [np.nan] * n_dst,
+        "replacement_ppg":     [np.nan] * n_dst,
+        "par":                 [0.0]  * n_dst,
+        "raw_price":           [float(min_bid)] * n_dst,
+        "price":               [min_bid] * n_dst,
+        "is_drafted":          [True] * n_dst,
+        "role_tier":           [np.nan] * n_dst,
     })
 
     off_rest["par"]        = 0.0
