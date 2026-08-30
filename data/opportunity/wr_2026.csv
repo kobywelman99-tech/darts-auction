@@ -6,7 +6,7 @@ Ja'Marr Chase,CIN,WR,alpha_wr,,,,0,0,"31.5% target share with Burrow, 37.3% air 
 George Pickens,DAL,WR,wr2,,,,0,0,Coming off a huge season.,medium,2026-08-18
 Chris Olave,NO,WR,alpha_wr,,,,0,1,Career-best 2025. Kellen Moore pushes downfield (6th most attempts). Etienne signing stabilizes run; Tyson added draws some targets. Going WR11.,medium,2026-08-18
 Zay Flowers,BAL,WR,alpha_wr,,,,0,1,McDaniel OC.,medium,2026-08-18
-Davante Adams,LA,WR,,,,,0,0,,,
+Davante Adams,LA,WR,wr2,,0.22,0.75,1,0,Age 34 on LA. Nacua alpha (25%) but Adams got 8+ tpg in 2025 alongside him — override to 0.22 share (6.6 tpg). Role safe; efficiency regresses post-TD-correction.,medium,2026-08-30
 Nico Collins,HOU,WR,alpha_wr,,,,0,1,,medium,2026-08-18
 Jameson Williams,DET,WR,wr2,,,,0,0,8.9 half-PPR ppg with LaPorta healthy vs 12.3 without. Capped while St. Brown and LaPorta play.,medium,2026-08-18
 Courtland Sutton,DEN,WR,wr2,,,,0,0,FADE per multiple tiers - one of the older Tier 6 names.,low,2026-08-18
@@ -23,7 +23,7 @@ DeVonta Smith,PHI,WR,wr2,,,,0,1,Mannion first-time OC; PHI likely slow-paced and
 Michael Pittman,PIT,WR,wr2,,,,1,1,Traded from IND.,low,2026-08-18
 Jaylen Waddle,DEN,WR,wr2,,,,1,0,,low,2026-08-18
 Alec Pierce,IND,WR,wr2,,,,0,0,FADE: only WR in 20 years to hit 1000 yds with 20+ aDOT. Role not fantasy-friendly. Ankle surgery recovery.,low,2026-08-18
-Justin Jefferson,MIN,WR,alpha_wr,,,,0,0,Down 2025. Dominant with every QB except McCarthy. Consensus buy-the-dip; falling to late R1/R2.,medium,2026-08-18
+Justin Jefferson,MIN,WR,alpha_wr,,,0.85,0,1,McCarthy gone — new OC shifts scheme away from run-first. Jefferson is the unquestioned alpha with no real WR2 threat. 2025 down year was situation-specific; model will be conservative on him due to recency weighting.,high,2026-08-30
 DK Metcalf,PIT,WR,wr2,,,,0,1,FADE per multiple tiers. McCarthy offense.,low,2026-08-18
 Parker Washington,JAX,WR,wr3,,,,0,0,Turning heads in camp. Depressed cost from crowded JAX room.,low,2026-08-18
 Deebo Samuel Sr.,WAS,WR,,,,,0,0,,,

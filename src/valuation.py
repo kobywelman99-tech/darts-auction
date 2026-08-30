@@ -68,6 +68,26 @@ STD_1QB_DRAFTED = 15                        # approx QBs drafted in a standard 1
 EFFICIENCY_SEASONS = [2023, 2024, 2025]
 EFFICIENCY_MIN_GAMES = 6   # lower bar: want more data for per-touch rates
 
+# ── Efficiency pipeline settings ────────────────────────────────────────────
+# Recency: year weights multiplied by games played within each season.
+# 2025 counts 3×, 2024 2×, 2023 1×.  Games-weighting within a year means
+# a 6-game injury season still outweighs a 16-game healthy season two years back.
+YEAR_WEIGHTS = {2023: 1.0, 2024: 2.0, 2025: 3.0}
+
+# TD regression: Bayesian shrinkage toward the positional median.
+# k is the equivalent "prior sample size": large k → heavy regression toward mean.
+# k=50 targets ≈ a fringe starter's seasonal volume; k=100 carries ≈ same for RBs.
+# QB passing: k=300 ≈ one season of backup-starter attempts.
+TD_REG_K_TARGETS  = 50    # receiving TD regression prior weight (targets)
+TD_REG_K_CARRIES  = 100   # rushing TD regression prior weight (carries)
+TD_REG_K_PASS_ATT = 300   # QB passing TD regression prior weight (attempts)
+
+# Age curve: applied AFTER recency-weighted efficiency.
+# Recency weighting answers "what is his efficiency NOW."
+# The age curve projects that estimate one year forward to 2026.
+# Scaling at 50% avoids amplifying both signals for a young ascending player.
+AGE_CURVE_SCALE = 0.50
+
 
 # ---------------------------------------------------------------------------
 # PROJECTION SOURCES
@@ -132,39 +152,78 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
         df.season.isin(EFFICIENCY_SEASONS) & (df.games >= EFFICIENCY_MIN_GAMES)
     ].copy()
 
-    # pts_per_carry: rushing points (yards/10 + 6×TD − 2×fumble) per carry
-    eff_df["_rush_pts"] = (
-        eff_df["rushing_yards"] / 10
-        + eff_df["rushing_tds"] * 6
-        - eff_df["rushing_fumbles_lost"] * 2
-    )
-    eff_df["pts_per_carry"] = np.where(
-        eff_df["carries"] > 10,
-        eff_df["_rush_pts"] / eff_df["carries"],
-        np.nan,   # ignore seasons where the player barely carried
-    )
+    # ── 1a. TD regression — split each season into non-TD and TD-rate parts ─
+    # Non-TD components are stable (yards per target, catch rate, yards per carry).
+    # TD rate is the noisiest signal in fantasy; regress it toward the positional
+    # median using Bayesian shrinkage: λ = k/(k+n), so more targets → less regression.
 
-    # pts_per_target: receiving points (yards/10 + 6×TD + 0.5×rec − 2×fumble) per target
-    eff_df["_rec_pts"] = (
+    eff_df["_non_td_rec_pts"] = (
         eff_df["receiving_yards"] / 10
-        + eff_df["receiving_tds"] * 6
         + eff_df["receptions"] * 0.5
         - eff_df["receiving_fumbles_lost"] * 2
     )
-    eff_df["pts_per_target"] = np.where(
+    eff_df["_rec_td_rate"] = np.where(
         eff_df["targets"] > 10,
-        eff_df["_rec_pts"] / eff_df["targets"],
+        eff_df["receiving_tds"] / eff_df["targets"],
+        np.nan,
+    )
+    eff_df["_non_td_rush_pts"] = (
+        eff_df["rushing_yards"] / 10
+        - eff_df["rushing_fumbles_lost"] * 2
+    )
+    eff_df["_rush_td_rate"] = np.where(
+        eff_df["carries"] > 10,
+        eff_df["rushing_tds"] / eff_df["carries"],
         np.nan,
     )
 
-    # Weighted mean by games across qualifying seasons
+    # Positional median TD rates (the Bayesian prior)
+    pos_rec_td_prior  = eff_df.groupby("position")["_rec_td_rate"].median()
+    pos_rush_td_prior = eff_df.groupby("position")["_rush_td_rate"].median()
+
+    _rec_td_prior_col  = eff_df["position"].map(pos_rec_td_prior).fillna(0.0)
+    _rush_td_prior_col = eff_df["position"].map(pos_rush_td_prior).fillna(0.0)
+
+    lam_rec  = TD_REG_K_TARGETS / (TD_REG_K_TARGETS + eff_df["targets"].clip(lower=1))
+    lam_rush = TD_REG_K_CARRIES / (TD_REG_K_CARRIES + eff_df["carries"].clip(lower=1))
+
+    eff_df["_rec_td_rate_reg"] = np.where(
+        eff_df["_rec_td_rate"].notna(),
+        (1 - lam_rec)  * eff_df["_rec_td_rate"]  + lam_rec  * _rec_td_prior_col,
+        np.nan,
+    )
+    eff_df["_rush_td_rate_reg"] = np.where(
+        eff_df["_rush_td_rate"].notna(),
+        (1 - lam_rush) * eff_df["_rush_td_rate"] + lam_rush * _rush_td_prior_col,
+        np.nan,
+    )
+
+    # Regressed per-touch efficiency = non-TD component + regressed TD contribution
+    eff_df["pts_per_carry"] = np.where(
+        eff_df["carries"] > 10,
+        eff_df["_non_td_rush_pts"] / eff_df["carries"]
+        + eff_df["_rush_td_rate_reg"] * 6,
+        np.nan,
+    )
+    eff_df["pts_per_target"] = np.where(
+        eff_df["targets"] > 10,
+        eff_df["_non_td_rec_pts"] / eff_df["targets"]
+        + eff_df["_rec_td_rate_reg"] * 6,
+        np.nan,
+    )
+
+    # ── 1b. Recency-weighted mean (year weight × games played) ───────────────
+    # 2025 counts 3×, 2024 2×, 2023 1×.  A 6-game injury season from 2025 still
+    # counts more than a 16-game 2023 season (6×3=18 > 16×1=16), which is by
+    # design: recent form beats old form, even abbreviated.
     def _wavg(g):
-        w = g["games"]
+        raw_w = g["games"] * g["season"].map(YEAR_WEIGHTS).fillna(1.0)
         def wmean(col):
             valid = g[col].notna()
-            if valid.sum() == 0:
+            if not valid.any():
                 return np.nan
-            return float((g.loc[valid, col] * w[valid]).sum() / w[valid].sum())
+            w = raw_w[valid]
+            return float((g.loc[valid, col] * w).sum() / w.sum())
         return pd.Series({
             "pts_per_carry":   wmean("pts_per_carry"),
             "pts_per_target":  wmean("pts_per_target"),
@@ -249,8 +308,32 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     merged["_team"] = merged["team"]
     merged["_age"]  = merged["age"]   # comes only from eff_cols join; NaN for rookies
 
+    # ── 4b. Age curve adjustment ─────────────────────────────────────────────
+    # Recency-weighted efficiency answers "what is this player's efficiency NOW."
+    # The age curve projects that one more year forward to 2026.
+    # Scaled at AGE_CURVE_SCALE (50%) so a young ascending player doesn't get
+    # both recency boost AND full curve delta pushing in the same direction.
+    from age_curves import fit_age_curves as _fit_curves
+    _curves = _fit_curves(df)
+
+    def _age_delta(pos: str, age) -> float:
+        if pd.isna(age):
+            return 0.0
+        curve = _curves.get(pos)
+        if curve is None:
+            return 0.0
+        return float(curve.expected_delta_ppg(float(age)))
+
+    merged["age_curve_delta"] = [
+        _age_delta(p, a)
+        for p, a in zip(merged["_pos"], merged["_age"])
+    ]
+    merged["proj_ppg"] = (
+        merged["proj_ppg"] + merged["age_curve_delta"] * AGE_CURVE_SCALE
+    ).clip(lower=0)
+
     opp_proj = merged[[
-        "player_name", "_pos", "_team", "_age", "proj_ppg", "role_tier"
+        "player_name", "_pos", "_team", "_age", "proj_ppg", "role_tier", "age_curve_delta"
     ]].rename(columns={
         "player_name": "player_display_name",
         "_pos":  "position",
@@ -268,6 +351,8 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
     if not qb_proj.empty:
         covered |= set(qb_proj["player_display_name"].str.lower())
     fallback = placeholder[~placeholder["player_display_name"].str.lower().isin(covered)]
+    fallback = fallback.copy()
+    fallback["age_curve_delta"] = 0.0   # no age adjustment for placeholder fallback
 
     parts = [opp_proj]
     if not qb_proj.empty:
@@ -276,6 +361,7 @@ def opportunity_projections(df: pd.DataFrame) -> pd.DataFrame:
 
     result = pd.concat(parts, ignore_index=True)
     result = result.drop_duplicates(subset="player_display_name", keep="first")
+    result["age_curve_delta"] = result.get("age_curve_delta", pd.Series(dtype=float)).fillna(0.0)
     return result.reset_index(drop=True)
 
 
@@ -339,10 +425,12 @@ def _compute_consistency() -> pd.DataFrame:
 
 def _compute_qb_efficiency() -> pd.DataFrame:
     """
-    Per-game QB efficiency from 2023-2025 weekly data.
+    Per-game QB efficiency from 2023-2025 weekly data, with:
+      - Season-level TD regression (Bayesian shrinkage toward QB median)
+      - Recency weighting (2025:3, 2024:2, 2023:1 × games in season)
 
-    Returns pts_per_pass_att and pts_per_rush for each QB with >= 6 qualifying
-    game-weeks.  Medians of these series are the fallback for rookies.
+    Returns pts_per_pass_att and pts_per_rush for each QB.
+    Medians are the fallback for rookies in _project_qb_opportunity.
     """
     data_dir = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
     frames = []
@@ -355,40 +443,96 @@ def _compute_qb_efficiency() -> pd.DataFrame:
             wk = wk[wk["season_type"] == "REG"]
         if "position" in wk.columns:
             wk = wk[wk["position"] == "QB"]
+        wk["_yr"] = yr
         frames.append(wk)
 
     if not frames:
         return pd.DataFrame(columns=["player_display_name", "pts_per_pass_att", "pts_per_rush"])
 
-    df = pd.concat(frames, ignore_index=True)
-    df = df[df["attempts"] > 10].copy()   # only games with meaningful pass volume
+    all_weeks = pd.concat(frames, ignore_index=True)
+    all_weeks = all_weeks[all_weeks["attempts"] > 10].copy()
 
-    # Passing pts per attempt using DARTS scoring (25 yd/pt, 4 TD, -2 INT)
-    df["_pass_pts"] = (
-        df["passing_yards"] / 25
-        + df["passing_tds"] * 4
-        - df["passing_interceptions"] * 2
-    )
-    df["pts_per_pass_att"] = df["_pass_pts"] / df["attempts"]
+    # ── Season-level aggregation ─────────────────────────────────────────────
+    # Work at season level so TD regression uses the full seasonal sample,
+    # then apply year weights when combining seasons.
+    season = all_weeks.groupby(["player_display_name", "_yr"]).agg(
+        attempts     = ("attempts",              "sum"),
+        carries      = ("carries",               "sum"),
+        pass_yds     = ("passing_yards",         "sum"),
+        pass_tds     = ("passing_tds",           "sum"),
+        pass_ints    = ("passing_interceptions", "sum"),
+        rush_yds     = ("rushing_yards",         "sum"),
+        rush_tds     = ("rushing_tds",           "sum"),
+        rush_fum     = ("rushing_fumbles_lost",  "sum"),
+        games        = ("week",                  "count"),
+    ).reset_index().rename(columns={"_yr": "season"})
 
-    # Rush pts per carry (rushing_yards/10 + 6×TD − 2×fumble)
-    df["_rush_pts"] = (
-        df["rushing_yards"] / 10
-        + df["rushing_tds"] * 6
-        - df["rushing_fumbles_lost"].fillna(0) * 2
-    )
-    df["pts_per_rush"] = np.where(df["carries"] > 1, df["_rush_pts"] / df["carries"], np.nan)
+    season = season[season["attempts"] >= 100].copy()
+    if season.empty:
+        return pd.DataFrame(columns=["player_display_name", "pts_per_pass_att", "pts_per_rush"])
 
-    agg = (
-        df.groupby("player_display_name")
-        .agg(
-            pts_per_pass_att=("pts_per_pass_att", "mean"),
-            pts_per_rush=("pts_per_rush", lambda x: float(x.dropna().mean()) if x.notna().any() else np.nan),
-            _n=("attempts", "count"),
-        )
-        .reset_index()
+    # ── TD regression for QB passing ─────────────────────────────────────────
+    # Passing TDs are the noisiest QB stat (r≈0.5 year-over-year).
+    # Regress per-attempt TD rate toward the QB population median.
+    season["_pass_td_rate"] = season["pass_tds"] / season["attempts"]
+    pos_pass_td_prior = float(season["_pass_td_rate"].median())
+    lam_pass = TD_REG_K_PASS_ATT / (TD_REG_K_PASS_ATT + season["attempts"])
+    season["_pass_td_rate_reg"] = (
+        (1 - lam_pass) * season["_pass_td_rate"] + lam_pass * pos_pass_td_prior
     )
-    return agg[agg["_n"] >= 6].drop(columns="_n").reset_index(drop=True)
+
+    # Non-TD passing points per attempt (yards − INTs; stable year-over-year)
+    season["_non_td_pass_ppa"] = (
+        season["pass_yds"] / 25 - season["pass_ints"] * 2
+    ) / season["attempts"]
+
+    season["pts_per_pass_att"] = (
+        season["_non_td_pass_ppa"] + season["_pass_td_rate_reg"] * 4
+    )
+
+    # ── TD regression for QB rushing ─────────────────────────────────────────
+    rush_mask = season["carries"] > 10
+    season["_rush_td_rate"] = np.where(
+        rush_mask, season["rush_tds"] / season["carries"], np.nan
+    )
+    pos_rush_td_prior = float(season["_rush_td_rate"].median())
+    lam_rush = TD_REG_K_CARRIES / (TD_REG_K_CARRIES + season["carries"].clip(lower=1))
+    season["_rush_td_rate_reg"] = np.where(
+        rush_mask,
+        (1 - lam_rush) * season["_rush_td_rate"].fillna(pos_rush_td_prior)
+        + lam_rush * pos_rush_td_prior,
+        pos_rush_td_prior,
+    )
+
+    season["_non_td_rush_ppr"] = np.where(
+        rush_mask,
+        (season["rush_yds"] / 10 - season["rush_fum"] * 2) / season["carries"],
+        np.nan,
+    )
+    season["pts_per_rush"] = np.where(
+        rush_mask,
+        season["_non_td_rush_ppr"] + season["_rush_td_rate_reg"] * 6,
+        np.nan,
+    )
+
+    # ── Recency-weighted aggregation across seasons ──────────────────────────
+    season["_yr_wt"]    = season["season"].map(YEAR_WEIGHTS).fillna(1.0)
+    season["_total_wt"] = season["games"] * season["_yr_wt"]
+
+    def _qb_wavg(g):
+        def wmean(col):
+            valid = g[col].notna()
+            if not valid.any():
+                return np.nan
+            w = g.loc[valid, "_total_wt"]
+            return float((g.loc[valid, col] * w).sum() / w.sum())
+        return pd.Series({
+            "pts_per_pass_att": wmean("pts_per_pass_att"),
+            "pts_per_rush":     wmean("pts_per_rush"),
+        })
+
+    agg = season.groupby("player_display_name").apply(_qb_wavg).reset_index()
+    return agg.reset_index(drop=True)
 
 
 def _project_qb_opportunity(df: pd.DataFrame) -> pd.DataFrame:
@@ -436,9 +580,24 @@ def _project_qb_opportunity(df: pd.DataFrame) -> pd.DataFrame:
     )
     merged = merged.merge(latest_qb, left_on="player_name", right_on="player_display_name", how="left")
 
+    # ── Age curve adjustment for QBs ─────────────────────────────────────────
+    from age_curves import fit_age_curves as _fit_curves_qb
+    _qb_curves = _fit_curves_qb(df)
+    qb_curve = _qb_curves.get("QB")
+
+    def _qb_age_delta(age) -> float:
+        if qb_curve is None or pd.isna(age):
+            return 0.0
+        return float(qb_curve.expected_delta_ppg(float(age)))
+
+    merged["age_curve_delta"] = merged["_age_hist"].apply(_qb_age_delta)
+    merged["proj_ppg"] = (
+        merged["proj_ppg"] + merged["age_curve_delta"] * AGE_CURVE_SCALE
+    ).clip(lower=0)
+
     result = merged[merged["proj_ppg"] > 0].copy()
     return result[[
-        "player_name", "position", "team", "proj_ppg", "role_tier", "_age_hist",
+        "player_name", "position", "team", "proj_ppg", "role_tier", "_age_hist", "age_curve_delta",
     ]].rename(columns={
         "player_name": "player_display_name",
         "_age_hist": "age",
